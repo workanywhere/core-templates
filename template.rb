@@ -19,28 +19,47 @@ def apply_template!
     skip_test_unit: true
   )
 
+  git :init unless preexisting_git_repo?
+  git_commit "Initial commit"
+
   template "Gemfile.tt", force: true
+  git_commit "Add Gemfile"
 
   template "example.env.tt"
+  git_commit "Add example.env"
+
   copy_file "editorconfig", ".editorconfig"
+  git_commit "Add .editorconfig"
+
   copy_file "erb-lint.yml", ".erb-lint.yml"
+  git_commit "Add .erb-lint.yml"
+
   copy_file "overcommit.yml", ".overcommit.yml"
+  git_commit "Add .overcommit.yml"
+
   template "ruby-version.tt", ".ruby-version", force: true
+  git_commit "Add .ruby-version"
 
   run("gem install overcommit")
 
   copy_file "Thorfile"
+  git_commit "Add Thorfile"
   copy_file "Procfile"
+  git_commit "Add Procfile"
 
   apply "Rakefile.rb"
+  git_commit "Add Rakefile"
   apply "bin/template.rb"
+  git_commit "Add bin"
   apply "github/template.rb"
+  git_commit "Add GitHub templates"
   apply "config/template.rb"
+  git_commit "Add config"
   apply "lib/template.rb"
+  git_commit "Add lib"
 
   empty_directory_with_keep_file "app/lib"
 
-  git :init unless preexisting_git_repo?
   empty_directory ".git/safe"
 
   after_bundle do
@@ -53,9 +72,13 @@ def apply_template!
       # Ignore locally-installed gems.
       /vendor/bundle/
     IGNORE
+    git_commit "Ignore application config and locally-installed gems"
 
     create_database_and_initial_migration
+    git_commit "Create database and initial migration"
+
     run_with_clean_bundler_env "bin/setup"
+    git_commit "Run bin/setup"
 
     %w[
       bundler-audit
@@ -73,9 +96,12 @@ def apply_template!
 
     binstubs = %w[bundler bundler-audit erb_lint rubocop thor]
     run_with_clean_bundler_env "bundle binstubs #{binstubs.join(' ')} --force"
+    git_commit "Install binstubs"
 
     copy_file "rubocop.yml", ".rubocop.yml"
+    git_commit "Add .rubocop.yml"
     run_rubocop_autocorrections
+    git_commit "Run rubocop autocorrections"
 
     unless any_local_git_commits?
       git checkout: "-b main"
@@ -217,6 +243,11 @@ def rewrite_json(file)
   json = JSON.parse(File.read(file))
   yield(json)
   File.write(file, JSON.pretty_generate(json) + "\n")
+end
+
+def git_commit(message)
+  git add: "-A ."
+  git commit: "-n -m '#{message}'"
 end
 
 apply_template!

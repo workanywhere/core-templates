@@ -1,7 +1,6 @@
 ---
 EnableDefaultLinters: true
 exclude:
-  - "node_modules/**/*"
   - "vendor/**/*"
 linters:
   ErbSafety:
@@ -11,13 +10,3 @@ linters:
     rubocop_config:
       inherit_from:
         - .rubocop.yml
-      Layout/InitialIndentation:
-        Enabled: false
-      Layout/TrailingEmptyLines:
-        Enabled: false
-      Lint/UselessAssignment:
-        Enabled: false
-      Naming/FileName:
-        Enabled: false
-      Rails/OutputSafety:
-        Enabled: false
