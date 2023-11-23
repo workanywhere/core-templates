@@ -57,6 +57,20 @@ def apply_template!
     create_database_and_initial_migration
     run_with_clean_bundler_env "bin/setup"
 
+    %w[
+      bundler-audit
+      erb_lint
+      rubocop
+      rubocop-performance
+      rubocop-rake
+      rubocop-rspec
+      rubocop-gitlab-security
+      rubocop-capybara
+      rubocop-factory_bot
+    ].each do |tool|
+      run("gem install #{tool}")
+    end
+
     binstubs = %w[bundler bundler-audit erb_lint rubocop thor]
     run_with_clean_bundler_env "bundle binstubs #{binstubs.join(' ')} --force"
 
@@ -107,7 +121,7 @@ def assert_minimum_rails_version
 
   return if requirement.satisfied_by?(rails_version)
 
-  prompt = "This template requires Rails #{RAILS_REQUIREMENT}. "\
+  prompt = "This template requires Rails #{RAILS_REQUIREMENT}. " \
            "You are using #{rails_version}. Continue anyway?"
 
   exit 1 if no?(prompt)
@@ -123,10 +137,9 @@ def assert_valid_options
   }
   valid_options.each do |key, expected|
     next unless options.key?(key)
+
     actual = options[key]
-    unless actual == expected
-      fail Rails::Generators::Error, "Unsupported option: #{key}=#{actual}"
-    end
+    raise Rails::Generators::Error, "Unsupported option: #{key}=#{actual}" unless actual == expected
   end
 end
 
@@ -140,7 +153,7 @@ def production_hostname
     ask_with_default("Production hostname?", :blue, "example.com")
 end
 
-def gemfile_entry(name, version=nil, require: true, force: false)
+def gemfile_entry(name, version = nil, require: true, force: false)
   @original_gemfile ||= IO.read("Gemfile")
   entry = @original_gemfile[/^\s*gem #{Regexp.quote(name.inspect)}.*$/]
   return if entry.nil? && !force
@@ -148,11 +161,12 @@ def gemfile_entry(name, version=nil, require: true, force: false)
   require = (entry && entry[/\brequire:\s*([\S]+)/, 1]) || require
   version = (entry && entry[/, "([^"]+)"/, 1]) || version
   args = [name.inspect, version&.inspect, ("require: false" if require != true)].compact
-  "gem #{args.join(", ")}\n"
+  "gem #{args.join(', ')}\n"
 end
 
 def ask_with_default(question, color, default)
   return default unless $stdin.tty?
+
   question = (question.split("?") << " [#{default}]?").join
   answer = ask(question, color)
   answer.to_s.strip.empty? ? default : answer
@@ -181,10 +195,10 @@ def run_with_clean_bundler_env(cmd)
             else
               run(cmd)
             end
-  unless success
-    puts "Command failed, exiting: #{cmd}"
-    exit(1)
-  end
+  return if success
+
+  puts "Command failed, exiting: #{cmd}"
+  exit(1)
 end
 
 def run_rubocop_autocorrections
@@ -194,6 +208,7 @@ end
 
 def create_database_and_initial_migration
   return if Dir["db/migrate/**/*.rb"].any?
+
   run_with_clean_bundler_env "bin/rails db:create"
   run_with_clean_bundler_env "bin/rails generate migration initial_migration"
 end
