@@ -31,3 +31,37 @@ Style/StringLiterals:
 
 Style/StringLiteralsInInterpolation:
   EnforcedStyle: double_quotes
+
+Style/FrozenStringLiteralComment:
+  Exclude:
+    - config/**/*
+    - spec/**/*
+    - Gemfile
+    - Rakefile
+    - Thorfile
+    - bin/**/*
+    - config.ru
+    - db/**/*
+    - lib/tasks/**/*
+
+Metrics/BlockLength:
+  Exclude:
+    - config/**/*
+    - spec/**/*
+
+Metrics/ClassLength:
+  Exclude:
+    - spec/**/*
+
+Metrics/MethodLength:
+  Exclude:
+    - db/migrate/*
+    - spec/**/*
+
+Metrics/ModuleLength:
+  Exclude:
+    - config/**/*
+
+Rails/ApplicationRecord:
+  Exclude:
+    - db/migrate/**
