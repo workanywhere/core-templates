@@ -57,7 +57,7 @@ def test_local_env_contains_required_keys
 
   return unless missing.any?
 
-  die("Your .env.development file is missing #{missing.join(', ')}")
+  die("Your .env.development file is missing #{missing.join(", ")}")
 end
 
 def log(color, message, out = $stdout)
