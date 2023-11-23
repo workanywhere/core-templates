@@ -15,10 +15,10 @@ jobs:
         with:
           fetch-depth: '1'
       -
-        name: Install ruby 3.2.2
+        name: Install ruby <%= RUBY_VERSION %>
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.2.2
+          ruby-version: <%= RUBY_VERSION %>
       -
         name: "Lint / rubocop"
         run: |
