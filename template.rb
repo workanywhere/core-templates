@@ -63,6 +63,8 @@ def apply_template!
   empty_directory ".git/safe"
 
   after_bundle do
+    git_commit "Run bundle install"
+
     append_to_file ".gitignore", <<~IGNORE
 
       # Ignore application config.
@@ -103,7 +105,7 @@ def apply_template!
     run_rubocop_autocorrections
     git_commit "Run rubocop autocorrections"
 
-    unless any_local_git_commits?
+    if changes_to_commit?
       git checkout: "-b main"
       git add: "-A ."
       git commit: "-n -m 'Set up project'"
@@ -207,8 +209,12 @@ def preexisting_git_repo?
   @preexisting_git_repo == true
 end
 
-def any_local_git_commits?
-  system("git log > /dev/null 2>&1")
+def changes_to_commit?
+  # Run git status and capture the output
+  status_output = `git status --porcelain`
+
+  # Check if the output is empty (no changes) or not (changes present)
+  !status_output.empty?
 end
 
 def run_with_clean_bundler_env(cmd)
