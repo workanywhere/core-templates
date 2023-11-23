@@ -62,59 +62,58 @@ def apply_template!
 
   empty_directory ".git/safe"
 
-  after_bundle do
-    git_commit "Run bundle install"
+  run("bundle install")
+  git_commit "Run bundle install"
 
-    append_to_file ".gitignore", <<~IGNORE
+  append_to_file ".gitignore", <<~IGNORE
 
-      # Ignore application config.
-      /.env.development
-      /.env.*local
+    # Ignore application config.
+    /.env.development
+    /.env.*local
 
-      # Ignore locally-installed gems.
-      /vendor/bundle/
-    IGNORE
-    git_commit "Ignore application config and locally-installed gems"
+    # Ignore locally-installed gems.
+    /vendor/bundle/
+  IGNORE
+  git_commit "Ignore application config and locally-installed gems"
 
-    create_database_and_initial_migration
-    git_commit "Create database and initial migration"
+  create_database_and_initial_migration
+  git_commit "Create database and initial migration"
 
-    run_with_clean_bundler_env "bin/setup"
-    git_commit "Run bin/setup"
+  run_with_clean_bundler_env "bin/setup"
+  git_commit "Run bin/setup"
 
-    %w[
-      bundler-audit
-      erb_lint
-      rubocop
-      rubocop-performance
-      rubocop-rake
-      rubocop-rspec
-      rubocop-gitlab-security
-      rubocop-capybara
-      rubocop-factory_bot
-    ].each do |tool|
-      run("gem install #{tool}")
-    end
-
-    binstubs = %w[bundler bundler-audit erb_lint rubocop thor]
-    run_with_clean_bundler_env "bundle binstubs #{binstubs.join(' ')} --force"
-    git_commit "Install binstubs"
-
-    copy_file "rubocop.yml", ".rubocop.yml"
-    git_commit "Add .rubocop.yml"
-    run_rubocop_autocorrections
-    git_commit "Run rubocop autocorrections"
-
-    if changes_to_commit?
-      git checkout: "-b main"
-      git add: "-A ."
-      git commit: "-n -m 'Set up project'"
-      if git_repo_specified?
-        git remote: "add origin #{git_repo_url.shellescape}"
-        git push: "-u origin --all"
-      end
-    end
+  %w[
+    bundler-audit
+    erb_lint
+    rubocop
+    rubocop-performance
+    rubocop-rake
+    rubocop-rspec
+    rubocop-gitlab-security
+    rubocop-capybara
+    rubocop-factory_bot
+  ].each do |tool|
+    run("gem install #{tool}")
   end
+
+  binstubs = %w[bundler bundler-audit erb_lint rubocop thor]
+  run_with_clean_bundler_env "bundle binstubs #{binstubs.join(' ')} --force"
+  git_commit "Install binstubs"
+
+  copy_file "rubocop.yml", ".rubocop.yml"
+  git_commit "Add .rubocop.yml"
+  run_rubocop_autocorrections
+  git_commit "Run rubocop autocorrections"
+
+  return unless changes_to_commit?
+
+  git checkout: "-b main"
+  git add: "-A ."
+  git commit: "-n -m 'Set up project'"
+  return unless git_repo_specified?
+
+  git remote: "add origin #{git_repo_url.shellescape}"
+  git push: "-u origin --all"
 end
 
 require "fileutils"
