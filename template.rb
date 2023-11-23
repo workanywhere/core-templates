@@ -251,6 +251,8 @@ def rewrite_json(file)
 end
 
 def git_commit(message)
+  return unless changes_to_commit?
+
   git add: "-A ."
   git commit: "-n -m '#{message}'"
 end
