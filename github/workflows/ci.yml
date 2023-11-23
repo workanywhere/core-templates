@@ -1,0 +1,44 @@
+name: CI
+
+on: [ push ]
+
+jobs:
+
+  lint:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      -
+        name: Checkout Source Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: '1'
+      -
+        name: Install ruby 3.2.2
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.2.2
+      -
+        name: "Lint / rubocop"
+        run: |
+          gem install rubocop
+          gem install rubocop-performance
+          gem install rubocop-rake
+          gem install rubocop-rspec
+          gem install rubocop-gitlab-security
+          gem install rubocop-rails
+          rubocop --parallel
+      -
+        name: "Lint / erblint"
+        run: bin/erblint --lint-all
+      -
+        name: "Security / brakeman"
+        run: |
+          gem install brakeman
+          brakeman --exit-on-warn --no-progress --color --output /dev/stdout
+      -
+        name: "Security / bundle-audit"
+        run: |
+          gem install bundle-audit
+          bundle-audit check --update -v
