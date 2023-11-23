@@ -1,5 +1,5 @@
-Rails.application.config.generators do |g|
+Rails.application.config.generators do |generator|
   # Disable generators we don't need.
-  g.javascripts false
-  g.stylesheets false
+  generator.javascripts false
+  generator.stylesheets false
 end
