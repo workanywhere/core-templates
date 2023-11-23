@@ -1,5 +1,5 @@
 apply "config/application.rb"
-template "config/database.yml", force: true
+
 remove_file "config/secrets.yml"
 
 gsub_file "config/routes.rb", /  # root 'welcome#index'/ do

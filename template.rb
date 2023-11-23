@@ -33,7 +33,6 @@ def apply_template!
   copy_file "Procfile"
 
   apply "Rakefile.rb"
-  apply "config.ru.rb"
   apply "bin/template.rb"
   apply "github/template.rb"
   apply "config/template.rb"
@@ -54,8 +53,6 @@ def apply_template!
       # Ignore locally-installed gems.
       /vendor/bundle/
     IGNORE
-
-    apply "app/template.rb"
 
     create_database_and_initial_migration
     run_with_clean_bundler_env "bin/setup"
