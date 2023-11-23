@@ -1,7 +1,8 @@
-if install_vite?
-  insert_into_file "config/application.rb", <<-RUBY, before: "  end"
+insert_into_file "config/application.rb", <<-RUBY, before: "  end"
 
-    # Prevents Rails from trying to eager-load the contents of app/frontend
-    config.javascript_path = "frontend"
-  RUBY
-end
+  logger           = ActiveSupport::Logger.new($stdout)
+  logger.formatter = config.log_formatter
+  config.logger    = ActiveSupport::TaggedLogging.new(logger)
+  config.log_level = :debug
+
+RUBY

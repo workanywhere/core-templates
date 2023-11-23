@@ -63,8 +63,6 @@ def apply_template!
     binstubs = %w[bundler bundler-audit erb_lint rubocop thor]
     run_with_clean_bundler_env "bundle binstubs #{binstubs.join(' ')} --force"
 
-    remove_file "Procfile.dev" unless File.exist?("bin/dev")
-
     copy_file "rubocop.yml", ".rubocop.yml"
     run_rubocop_autocorrections
 
@@ -209,7 +207,4 @@ def rewrite_json(file)
   File.write(file, JSON.pretty_generate(json) + "\n")
 end
 
-def install_vite?
-  options[:javascript] == "vite"
-end
 apply_template!
