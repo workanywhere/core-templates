@@ -66,3 +66,6 @@ Metrics/ModuleLength:
 Rails/ApplicationRecord:
   Exclude:
     - db/migrate/**
+
+Style/Documentation:
+  Enabled: false
