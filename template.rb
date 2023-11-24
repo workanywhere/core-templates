@@ -3,7 +3,7 @@ require "json"
 
 RAILS_REQUIREMENT = "~> 7.1.2".freeze
 
-# rails _7.1.2_ new --name my-test-app-2 --database=sqlite3 --template ~/WorkSpace/Rails/Rails7/RailsTemplates/core-templates/template.rb
+# rails _7.1.2_ new dokku-test-app-3 --database=sqlite3 --css=tailwind --javascript=importmap --skip-jbuilder --skip-test --template ~/WorkSpace/Rails/Rails7/RailsTemplates/core-templates/template.rb
 
 def apply_template!
   assert_minimum_rails_version
@@ -13,10 +13,10 @@ def apply_template!
   self.options = options.reverse_merge(
     css: "tailwind",
     javascript: "importmap",
-    skip_jbuilder: true,
-    skip_system_test: true,
-    skip_test: true,
-    skip_test_unit: true
+    skip_jbuilder: false,
+    skip_system_test: false,
+    skip_test: false,
+    skip_test_unit: false
   )
 
   git :init unless preexisting_git_repo?
@@ -62,6 +62,14 @@ def apply_template!
 
   empty_directory ".git/safe"
 
+  after_bundle do
+    git_commit "Initial setup"
+    run("rails generate rspec:install")
+    git_commit "Add RSpec"
+    run_rubocop_autocorrections
+    git_commit "Run rubocop autocorrections"
+  end
+
   run("bundle install")
   git_commit "Run bundle install"
 
@@ -102,8 +110,6 @@ def apply_template!
 
   copy_file "rubocop.yml", ".rubocop.yml"
   git_commit "Add .rubocop.yml"
-  run_rubocop_autocorrections
-  git_commit "Run rubocop autocorrections"
 
   return unless changes_to_commit?
 

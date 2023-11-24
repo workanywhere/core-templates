@@ -19,12 +19,13 @@ AllCops:
     # ignore bin/* except for bin/setup
     - !ruby/regexp /<%= Regexp.quote(File.expand_path("bin", __dir__)) %>\/(?!setup).*/
     - .git/**/*
-    - db/*schema.rb
+    - db/**/*
     - log/**/*
     - public/**/*
     - storage/**/*
     - tmp/**/*
     - vendor/**/*
+    - 'spec/spec_helper.rb'
 
 Style/StringLiterals:
   EnforcedStyle: double_quotes

@@ -1,11 +1,11 @@
 desc "Run erblint"
-task :erblint do
+task erblint: :environment do
   sh "bin/erblint --lint-all"
 end
 
 namespace :erblint do
   desc "Autocorrect erblint offenses"
-  task :autocorrect do
+  task autocorrect: :environment do
     sh "bin/erblint --lint-all -a"
   end
 end
