@@ -3,21 +3,23 @@ require "json"
 
 RAILS_REQUIREMENT = "~> 7.1.2".freeze
 
-# rails _7.1.2_ new dokku-test-app-3 --database=sqlite3 --css=tailwind --javascript=importmap --skip-jbuilder --skip-test --template ~/WorkSpace/Rails/Rails7/RailsTemplates/core-templates/template.rb
+# rails _7.1.2_ new my-app-1 --database=sqlite3 --css=tailwind --javascript=importmap --skip-jbuilder --skip-test --template ~/WorkSpace/Rails/Rails7/RailsTemplates/core-templates/template.rb
+# rails _7.1.2_ new my-app-1 -m ~/WorkSpace/Rails/Rails7/RailsTemplates/core-templates/template.rb
 
 def apply_template!
   assert_minimum_rails_version
   add_template_repository_to_source_path
-  assert_valid_options
 
   self.options = options.reverse_merge(
     css: "tailwind",
     javascript: "importmap",
-    skip_jbuilder: false,
-    skip_system_test: false,
-    skip_test: false,
-    skip_test_unit: false
+    skip_jbuilder: true,
+    skip_system_test: true,
+    skip_test: true,
+    skip_test_unit: true
   )
+
+  assert_valid_options
 
   git :init unless preexisting_git_repo?
   git_commit "Initial commit"
@@ -163,15 +165,21 @@ end
 # Bail out if user has passed in contradictory generator options.
 def assert_valid_options
   valid_options = {
-    skip_gemfile: false,
-    skip_bundle: false,
-    skip_git: false,
-    edge: false
+    "skip_namespace" => false,
+    "skip_collision_check" => false,
+    "asset_pipeline" => "sprockets",
+    "api" => false,
+    "javascript" => "importmap",
+    "css" => "tailwind",
+    "skip_jbuilder" => true,
+    "skip_test" => true
   }
-  valid_options.each do |key, expected|
-    next unless options.key?(key)
 
+  valid_options.each do |key, expected|
     actual = options[key]
+
+    raise Rails::Generators::Error, "\nMissing option: #{key}=#{expected}" if actual.nil?
+
     raise Rails::Generators::Error, "Unsupported option: #{key}=#{actual}" unless actual == expected
   end
 end
