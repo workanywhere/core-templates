@@ -1,4 +1,4 @@
-# Source: https://github.com/rails/tailwindcss-rails/blob/v2.0.32/lib/generators/tailwindcss/scaffold/templates/*.erb.tt
+<%# Source: https://github.com/rails/tailwindcss-rails/blob/v2.0.32/lib/generators/tailwindcss/scaffold/templates/*.erb.tt %>
 <div class="mx-auto md:w-2/3 w-full flex">
   <div class="mx-auto">
     <%% if notice.present? %>

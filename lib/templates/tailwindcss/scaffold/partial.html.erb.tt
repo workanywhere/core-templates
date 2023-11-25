@@ -1,4 +1,4 @@
-# Source: https://github.com/rails/tailwindcss-rails/blob/v2.0.32/lib/generators/tailwindcss/scaffold/templates/*.erb.tt
+<%# Source: https://github.com/rails/tailwindcss-rails/blob/v2.0.32/lib/generators/tailwindcss/scaffold/templates/*.erb.tt %>
 <div id="<%%= dom_id <%= singular_name %> %>">
 <% attributes.reject(&:password_digest?).each do |attribute| -%>
   <p class="my-5">

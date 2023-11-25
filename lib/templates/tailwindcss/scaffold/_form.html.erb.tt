@@ -1,4 +1,4 @@
-# Source: https://github.com/rails/tailwindcss-rails/blob/v2.0.32/lib/generators/tailwindcss/scaffold/templates/*.erb.tt
+<%# Source: https://github.com/rails/tailwindcss-rails/blob/v2.0.32/lib/generators/tailwindcss/scaffold/templates/*.erb.tt %>
 <%%= form_with(model: <%= model_resource_name %>, class: "contents") do |form| %>
   <%% if <%= singular_table_name %>.errors.any? %>
     <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
