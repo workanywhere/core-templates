@@ -59,6 +59,8 @@ def apply_template!
   git_commit "Add config"
   apply "lib/template.rb"
   git_commit "Add lib"
+  apply "lib/templates.rb"
+  git_commit "Add templates"
 
   empty_directory_with_keep_file "app/lib"
 
