@@ -22,7 +22,6 @@ end
 # Run the main method
 process_templates
 
-insert_into_file "spec/rails_helper.rb", "config.filter_rails_from_backtrace!", <<-RUBY, after: "end"
-
+append_to_file "spec/rails_helper.rb", <<~RUBY
 Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 RUBY
