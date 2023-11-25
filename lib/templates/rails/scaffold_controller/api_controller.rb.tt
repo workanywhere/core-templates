@@ -1,3 +1,4 @@
+# Source: https://github.com/rails/rails/blob/7-1-stable/railties/lib/rails/generators/rails/scaffold_controller/templates/api_controller.rb.tt
 <% if namespaced? -%>
 require_dependency "<%= namespaced_path %>/application_controller"
 

@@ -1,3 +1,4 @@
+# Source: https://github.com/palkan/action_policy/blob/v0.6.7/lib/generators/rspec/templates/policy_spec.rb.tt
 require "<%= File.exist?('spec/rails_helper.rb') ? 'rails_helper' : 'spec_helper' %>"
 
 RSpec.describe <%= class_name %>Policy, type: :policy do

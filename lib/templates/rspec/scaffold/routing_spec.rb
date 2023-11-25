@@ -1,3 +1,4 @@
+# Source: https://github.com/rspec/rspec-rails/blob/6-1-maintenance/lib/generators/rspec/scaffold/templates/routing_spec.rb
 require "rails_helper"
 
 <% module_namespacing do -%>
