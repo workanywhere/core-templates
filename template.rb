@@ -4,7 +4,7 @@ require "json"
 RAILS_REQUIREMENT = "~> 7.1.2".freeze
 
 # rails _7.1.2_ new my-app-1 --database=sqlite3 --css=tailwind --javascript=importmap --skip-jbuilder --skip-test --template ~/WorkSpace/Rails/Rails7/RailsTemplates/core-templates/template.rb
-# rails _7.1.2_ new my-app-1 -m ~/WorkSpace/Rails/Rails7/RailsTemplates/core-templates/template.rb
+# rails _7.1.2_ new my-app-1 --skip-test -m ~/WorkSpace/Rails/Rails7/RailsTemplates/core-templates/template.rb
 
 def apply_template!
   assert_minimum_rails_version
