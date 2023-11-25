@@ -70,6 +70,7 @@ def apply_template!
     git_commit "Initial setup"
     run("rails generate rspec:install")
     git_commit "Add RSpec"
+    apply "spec/template.rb"
     run_rubocop_autocorrections
     git_commit "Run rubocop autocorrections"
   end
