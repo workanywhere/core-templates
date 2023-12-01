@@ -57,6 +57,8 @@ def apply_template!
   git_commit "Add bin"
   apply "github/template.rb"
   git_commit "Add GitHub templates"
+  apply "types/template.rb"
+  git_commit "Add types"
   apply "config/template.rb"
   git_commit "Add config"
   apply "lib/template.rb"

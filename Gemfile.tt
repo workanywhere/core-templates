@@ -9,8 +9,16 @@ gem "rails", "~> <%= Rails.version[/\d+.\d+.\d+/] %>"
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem "sprockets-rails"
 
+<% if options[:database] == "postgresql" -%>
+# Use postgresql as the database for Active Record
+gem "pg", "~> 1.1"
+<% elsif options[:database] == "mysql" -%>
+# Use mysql as the database for Active Record
+gem "mysql2", "~> 0.5"
+<% elsif options[:database] == "sqlite3" -%>
 # Use sqlite3 as the database for Active Record
 gem "sqlite3", "~> 1.4"
+<% end -%>
 
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
@@ -45,7 +53,7 @@ gem "bootsnap", require: false
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
 
-gem "ulid-rails"
+gem "securerandom"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
