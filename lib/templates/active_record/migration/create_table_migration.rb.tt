@@ -3,7 +3,7 @@ class <%= migration_class_name %> < ActiveRecord::Migration[<%= ActiveRecord::Mi
   def change
 <% if ["SQLite", "Mysql2"].include?(ActiveRecord::Base.connection.adapter_name) -%>
     create_table :<%= table_name %>, id: false do |t|
-      table.binary :uuid, limit: 32, null: false, index: { unique: true }, primary_key: true
+      t.binary :id, limit: 32, null: false, index: { unique: true }, primary_key: true
 <% else -%>
     create_table :<%= table_name %><%= primary_key_type %> do |t|
 <% end -%>

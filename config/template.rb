@@ -4,11 +4,6 @@ remove_file "config/secrets.yml"
 
 template "config/initializers/generators.rb.tt", ".config/initializers/generators.rb", force: true
 
-if %w[sqlite3 mysql].include?(options[:database])
-  copy_file "config/initializers/uuid_rails.rb"
-  copy_file "config/initializers/types.rb"
-end
-
 apply "config/environments/development.rb"
 apply "config/environments/production.rb"
 apply "config/environments/test.rb"

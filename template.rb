@@ -57,8 +57,6 @@ def apply_template!
   git_commit "Add bin"
   apply "github/template.rb"
   git_commit "Add GitHub templates"
-  apply "types/template.rb"
-  git_commit "Add types"
   apply "config/template.rb"
   git_commit "Add config"
   apply "lib/template.rb"
@@ -77,6 +75,10 @@ def apply_template!
     apply "spec/template.rb"
     run_rubocop_autocorrections
     git_commit "Run rubocop autocorrections"
+    if %w[sqlite3 mysql].include?(options[:database])
+      run("rails generate uuid_v7:install")
+      git_commit "Add Uuid_v7"
+    end
   end
 
   run("bundle install")
