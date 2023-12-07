@@ -3,7 +3,7 @@ class <%= migration_class_name %> < ActiveRecord::Migration[<%= ActiveRecord::Mi
   def change
 <% if ["SQLite", "Mysql2"].include?(ActiveRecord::Base.connection.adapter_name) -%>
     create_table :<%= table_name %>, id: false do |t|
-      t.binary :id, limit: 32, null: false, index: { unique: true }, primary_key: true
+      t.binary :id, limit: 16, null: false, index: { unique: true }, primary_key: true
 <% else -%>
     create_table :<%= table_name %><%= primary_key_type %> do |t|
 <% end -%>
@@ -15,11 +15,11 @@ class <%= migration_class_name %> < ActiveRecord::Migration[<%= ActiveRecord::Mi
 <% elsif attribute.reference? -%>
 <% if ["SQLite", "Mysql2"].include?(ActiveRecord::Base.connection.adapter_name) -%>
 
-      t.binary :<%= attribute.name %>_id, null: false, limit: 32
-      t.foreign_key :<%= attribute.name %>s, column: :<%= attribute.name %>_id, primary_key: "id"
-      t.index :<%= attribute.name %>_id
+      # t.binary :<%= attribute.name %>_id, null: false, limit: 16
+      # t.foreign_key :<%= attribute.name %>s, column: :<%= attribute.name %>_id, primary_key: "id"
+      # t.index :<%= attribute.name %>_id
 
-      # t.references :<%= attribute.name %>, foreign_key: true, index: true, type: :binary, limit: 32, null: false
+      t.references :<%= attribute.name %>, foreign_key: true, index: true, type: :binary, limit: 16, null: false
 <% else -%>
       t.<%= attribute.type %> :<%= attribute.name %><%= attribute.inject_options %><%= foreign_key_type %>
 <% end -%>

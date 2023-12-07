@@ -38,13 +38,8 @@ def apply_template!
   copy_file "erb-lint.yml", ".erb-lint.yml"
   git_commit "Add .erb-lint.yml"
 
-  copy_file "overcommit.yml", ".overcommit.yml"
-  git_commit "Add .overcommit.yml"
-
   template "ruby-version.tt", ".ruby-version", force: true
   git_commit "Add .ruby-version"
-
-  run("gem install overcommit")
 
   copy_file "Thorfile"
   git_commit "Add Thorfile"
@@ -77,7 +72,9 @@ def apply_template!
     git_commit "Run rubocop autocorrections"
     if %w[sqlite3 mysql].include?(options[:database])
       run("rails generate uuid_v7:install")
-      git_commit "Add Uuid_v7"
+      git_commit "Add Uuid_v7 initializer"
+      run("rails generate uuid_v7:migrations --force")
+      git_commit "Add Uuid_v7 migrations"
     end
   end
 
@@ -111,9 +108,15 @@ def apply_template!
     rubocop-gitlab-security
     rubocop-capybara
     rubocop-factory_bot
+    overcommit
   ].each do |tool|
     run("gem install #{tool}")
   end
+
+  run "overcommit --install" # if overcommit_present?
+  copy_file "overcommit.yml", ".overcommit.yml", force: true
+  run("overcommit --sign")
+  git_commit "Add .overcommit.yml"
 
   binstubs = %w[bundler bundler-audit erb_lint rubocop thor]
   run_with_clean_bundler_env "bundle binstubs #{binstubs.join(' ')} --force"

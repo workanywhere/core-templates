@@ -3,7 +3,7 @@
 def setup!
   within_project_root do
     run "bundle check > /dev/null 2>&1 || bundle install"
-    run "overcommit --install" if overcommit_present?
+    # run "overcommit --install" if overcommit_present?
     copy "example.env", ".env.development"
     test_local_env_contains_required_keys
     run "bin/rails tmp:create db:prepare"

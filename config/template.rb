@@ -2,7 +2,7 @@ apply "config/application.rb"
 
 remove_file "config/secrets.yml"
 
-template "config/initializers/generators.rb.tt", ".config/initializers/generators.rb", force: true
+template "config/initializers/generators.rb.tt", "config/initializers/generators.rb", force: true
 
 apply "config/environments/development.rb"
 apply "config/environments/production.rb"

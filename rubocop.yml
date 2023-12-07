@@ -26,6 +26,7 @@ AllCops:
     - tmp/**/*
     - vendor/**/*
     - 'spec/spec_helper.rb'
+    - 'lib/templates/**/*'
 
 Style/StringLiterals:
   EnforcedStyle: double_quotes
