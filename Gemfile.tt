@@ -54,7 +54,7 @@ gem "bootsnap", require: false
 # gem "image_processing", "~> 1.2"
 
 <% if %w[sqlite3 mysql].include?(options[:database]) -%>
-gem "uuid_v7", path: "~/WorkSpace/Gems/UuidV7/uuid_v7"
+gem "uuid_v7" #, path: "~/WorkSpace/Gems/UuidV7/uuid_v7"
 <% end -%>
 
 group :development do
