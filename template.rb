@@ -45,6 +45,8 @@ def apply_template!
   git_commit "Add Thorfile"
   copy_file "Procfile"
   git_commit "Add Procfile"
+  copy_file "app.json"
+  git_commit "Add Dokku Deployment Tasks Configuration"
 
   apply "Rakefile.rb"
   git_commit "Add Rakefile"
