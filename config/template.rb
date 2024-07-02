@@ -4,7 +4,9 @@ remove_file "config/secrets.yml"
 
 template "config/initializers/generators.rb.tt", "config/initializers/generators.rb", force: true
 
-copy_file "config/initializers/extended_scaffold_generator.rb"
+# Comment for now as that file prevent hook_for :template_engine tailwindcss to be run
+# invoke erb instead of tailwindcss
+# copy_file "config/initializers/extended_scaffold_generator.rb"
 
 apply "config/environments/development.rb"
 apply "config/environments/production.rb"
