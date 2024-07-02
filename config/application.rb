@@ -21,3 +21,5 @@ if options[:database] == "mysql"
         config.active_record.dump_schema_after_migration = false
     RUBY
 end
+
+comment_lines "config/application.rb", /config\.generators\.system_tests = nil/

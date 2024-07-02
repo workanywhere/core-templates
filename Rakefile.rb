@@ -1,6 +1,8 @@
 append_to_file "Rakefile" do
   <<~RUBY
 
+  ENV["RAILS_ENV"] ||= "test"
+
   Rake::Task[:default].prerequisites.clear if Rake::Task.task_defined?(:default)
 
   require "rspec/core/rake_task"

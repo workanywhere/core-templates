@@ -4,6 +4,8 @@ remove_file "config/secrets.yml"
 
 template "config/initializers/generators.rb.tt", "config/initializers/generators.rb", force: true
 
+copy_file "config/initializers/extended_scaffold_generator.rb"
+
 apply "config/environments/development.rb"
 apply "config/environments/production.rb"
 apply "config/environments/test.rb"

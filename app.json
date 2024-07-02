@@ -5,7 +5,7 @@
         "type": "startup",
         "name": "web check",
         "description": "Checking if the app responds",
-        "path": "/",
+        "path": "/posts",
         "attempts": 3
       }
     ]
