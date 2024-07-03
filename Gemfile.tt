@@ -6,8 +6,8 @@ ruby "<%= RUBY_VERSION %>"
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> <%= Rails.version[/\d+.\d+.\d+/] %>"
 
-# The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
-gem "sprockets-rails"
+# The modern asset pipeline for Rails [https://github.com/rails/propshaft]
+gem "propshaft"
 
 <% if options[:database] == "postgresql" -%>
 # Use postgresql as the database for Active Record

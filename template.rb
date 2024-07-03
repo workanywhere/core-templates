@@ -15,6 +15,7 @@ def apply_template!
   self.options = options.reverse_merge(
     css: "tailwind",
     javascript: "importmap",
+    asset_pipeline: "propshaft",
     skip_jbuilder: true,
     skip_system_test: true,
     skip_test: true,
@@ -187,7 +188,7 @@ def assert_valid_options
   valid_options = {
     "skip_namespace" => false,
     "skip_collision_check" => false,
-    "asset_pipeline" => "sprockets",
+    "asset_pipeline" => "propshaft",
     "api" => false,
     "javascript" => "importmap",
     "css" => "tailwind",
