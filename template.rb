@@ -1,7 +1,7 @@
 require "bundler"
 require "json"
 
-RAILS_REQUIREMENT = "~> 7.1.2".freeze
+RAILS_REQUIREMENT = "~> 7.2.0".freeze
 # RAILS_REQUIREMENT = "~> 7.0.8".freeze
 
 # rails _7.1.2_ new my-app-1 --database=sqlite3 --css=tailwind --javascript=importmap --skip-jbuilder --skip-test --template ~/WorkSpace/Rails/Rails7/RailsTemplates/core-templates/template.rb
@@ -114,6 +114,7 @@ def apply_template!
     rubocop-performance
     rubocop-rake
     rubocop-rspec
+    rubocop-rspec_rails
     rubocop-gitlab-security
     rubocop-capybara
     rubocop-factory_bot
