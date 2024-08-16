@@ -16,24 +16,7 @@ module PostCreation
       # bundle exec thor deployment:configuration
       def configuration
         say "Checking if dokku is installed"
-        current_app_name = File.basename(Dir.pwd)
-        app_name = nil
-
-        # Sanitize the app name
-        sanitized_name = current_app_name
-                        .gsub(/[^a-z0-9]/, '')            # Remove any character that is not lowercase letter or digit
-                        .gsub(/^.*[^a-z]/, '')            # Remove any leading characters not lowercase letter
-                        .gsub(/^([a-z][a-z0-9]*)$/, '\1') # Ensure it starts with a lowercase letter
-
-        # Verify the sanitized name
-        if sanitized_name.match?(/^[a-z][a-z0-9]*$/)
-          puts "Sanitized app name: '#{sanitized_name}'"
-          app_name = sanitized_name
-          puts "App name: '#{app_name}'"
-        else
-          puts "The sanitized app name is invalid."
-          exit(1)
-        end
+        app_name = get_app_name
 
         inside "~" do
           if run("DOKKU_HOST=dokku.me dokku apps:list | grep #{app_name}")
@@ -80,12 +63,36 @@ module PostCreation
         run("dokku ps:restart")
       end
 
+      desc "deploy", "Deploy the app to dokku"
+      # bundle exec thor deployment:deploy
+      def deploy
+        say "Deploying to dokku"
+        run_with_clean_bundler_env("git push dokku main")
+      end
+
       private
 
-      def current_directory_name
-        @current_directory_name ||= File.basename(Dir.pwd)
+      def get_app_name
+        current_app_name = File.basename(Dir.pwd)
+        app_name = nil
+
+        # Sanitize the app name
+        sanitized_name = current_app_name
+                        .gsub(/[^a-z0-9]/, '')            # Remove any character that is not lowercase letter or digit
+                        .gsub(/^.*[^a-z]/, '')            # Remove any leading characters not lowercase letter
+                        .gsub(/^([a-z][a-z0-9]*)$/, '\1') # Ensure it starts with a lowercase letter
+
+        # Verify the sanitized name
+        if sanitized_name.match?(/^[a-z][a-z0-9]*$/)
+          puts "Sanitized app name: '#{sanitized_name}'"
+          app_name = sanitized_name
+          puts "App name: '#{app_name}'"
+          return app_name
+        else
+          puts "The sanitized app name is invalid."
+          exit(1)
+        end
       end
-      alias_method :app_name, :current_directory_name
 
       def run_with_clean_bundler_env(cmd)
         success = if defined?(Bundler)
