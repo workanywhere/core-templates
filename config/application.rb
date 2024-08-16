@@ -5,7 +5,7 @@ insert_into_file "config/application.rb", <<-RUBY, before: "  end"
     config.logger    = ActiveSupport::TaggedLogging.new(logger)
     config.log_level = :debug
 
-    config.active_record.schema_format = :sql
+    config.active_record.schema_format = :ruby # :sql
 
 RUBY
 
