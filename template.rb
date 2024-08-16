@@ -91,11 +91,18 @@ def apply_template!
 
   empty_directory ".git/safe"
 
+  after_bundle do
+    git_commit "Initial setup"
+  end
+
   run("bundle install")
   git_commit "Run bundle install"
 
   run("rails generate rspec:install")
   git_commit "Add RSpec"
+
+  run("rails generate tailwindcss:install")
+  git_commit "Add TailwindCSS"
 
   apply "spec/template.rb"
   git_commit "Add RSpec Support templates"
