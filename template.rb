@@ -68,7 +68,7 @@ def apply_template!
   # Make sure the templates are NOT loaded.
   # Ideally template files should get the extension .tt, so there are ignored by default.
   # Unfortunately it is not always the case so we have to make sure the directory is safely ignored by the loader.
-  gsub_file "config/application.rb", /config\.autoload_lib\(ignore: %w\(assets tasks\)\)/, "config.autoload_lib(ignore: %w[assets tasks templates])"
+  gsub_file "config/application.rb", /config\.autoload_lib\(ignore: %w\[assets tasks\]\)/, "config.autoload_lib(ignore: %w[assets tasks templates])"
   git_commit "Ignore templates"
 
   empty_directory_with_keep_file "app/lib"
