@@ -15,7 +15,14 @@ end
 def process_file(file, destination_root)
   file_destination = destination_root.join(file.relative_path_from(@bins_dir))
   FileUtils.mkdir_p(file_destination.dirname)
-  FileUtils.cp(file, file_destination)
+  # If the extension is .erb.tt, we need to process it
+  if file.extname == ".erb.tt"
+    # and remove the extension .erb.tt
+    template file, file_destination.gsub(/\.erb\.tt$/, ""), force: true
+  else
+    # FileUtils.cp(file, file_destination)
+    copy_file file, file_destination
+  end
   chmod file_destination, "+x"
 
   git_commit("Add bins #{file_destination}")
