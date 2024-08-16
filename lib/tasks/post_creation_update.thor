@@ -40,7 +40,7 @@ module PostCreation
         run_with_clean_bundler_env("SKIP=RailsSchemaUpToDate git apply ./patches/post_form.erb.patch")
         commit "Update post form partial"
 
-        if adapter_name.strip != "PostgreSQL"
+        if adapter_name !~ /PostgreSQL/
           run_with_clean_bundler_env("SKIP=RailsSchemaUpToDate git apply ./patches/post_model.rb.patch")
           commit "Update post model"
         end
@@ -50,7 +50,7 @@ module PostCreation
         RUBY
         commit "Seed content"
 
-        if adapter_name.strip == "Mysql2"
+        if adapter_name =~ /Mysql2/
           current_directory_name = File.basename(Dir.pwd)
           say "Creating MySQL databases for #{current_directory_name}_development and #{current_directory_name}_test"
           run("docker exec mysql-container bash -c \"mysql -u root -e 'CREATE DATABASE IF NOT EXISTS #{current_directory_name}_development;'\"")
@@ -65,7 +65,7 @@ module PostCreation
         run("bundle add foreman")
         commit "Add foreman to the Gemfile"
 
-        if adapter_name.strip == "PostgreSQL"
+        if adapter_name =~ /PostgreSQL/
           say("DB_PORT=5433 ./bin/dev")
         else
           say("./bin/dev")
