@@ -72,24 +72,25 @@ module PostCreation
 
       private
 
+      # App name must begin with lowercase alphanumeric character, and cannot include uppercase characters, colons, or underscores
       def get_app_name
         current_app_name = File.basename(Dir.pwd)
-        app_name = nil
+
+        puts "Current app name: '#{current_app_name}'"
 
         # Sanitize the app name
-        sanitized_name = current_app_name
-                        .gsub(/[^a-z0-9]/, '')            # Remove any character that is not lowercase letter or digit
-                        .gsub(/^.*[^a-z]/, '')            # Remove any leading characters not lowercase letter
-                        .gsub(/^([a-z][a-z0-9]*)$/, '\1') # Ensure it starts with a lowercase letter
+        sanitized_name = current_app_name.downcase
+                          .gsub("_", "") # Remove underscores
+                          .gsub("-", "") # Remove dashes
 
         # Verify the sanitized name
         if sanitized_name.match?(/^[a-z][a-z0-9]*$/)
           puts "Sanitized app name: '#{sanitized_name}'"
           app_name = sanitized_name
           puts "App name: '#{app_name}'"
-          return app_name
+          app_name
         else
-          puts "The sanitized app name is invalid."
+          puts "The sanitized app name is invalid. [#{sanitized_name}]"
           exit(1)
         end
       end
@@ -101,9 +102,9 @@ module PostCreation
                     else
                       Bundler.with_clean_env { run(cmd) }
                     end
-        else
+                  else
                     run(cmd)
-        end
+                  end
 
         return true if success
 
