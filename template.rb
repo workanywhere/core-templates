@@ -141,6 +141,7 @@ def apply_template!
 
   run "rails generate controller Welcome home"
   gsub_file "config/routes.rb", 'root "posts#index"', 'root "welcome#home"'
+  uncomment_lines "config/routes.rb", /root "welcome/
   git_commit "Generate Welcome controller"
 
   copy_dir "patches", "patches"
