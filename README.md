@@ -1,1 +1,1 @@
-rails _7.2.0_ new my_rails_app --database=sqlite3 --skip-test --asset-pipeline=propshaft --template ~/WorkSpace/Rails/Rails7/RailsTemplates/core-templates/template.rb
+rails _7.2.0_ new my_rails_app --database=sqlite3 --skip-test --skip-jbuilder --asset-pipeline=propshaft --template ~/WorkSpace/Rails/Rails7/RailsTemplates/core-templates/template.rb
