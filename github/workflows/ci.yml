@@ -26,6 +26,7 @@ jobs:
           gem install rubocop-performance
           gem install rubocop-rake
           gem install rubocop-rspec
+          gem install rubocop-rspec_rails
           gem install rubocop-gitlab-security
           gem install rubocop-rails
           gem install rubocop-capybara
