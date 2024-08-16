@@ -3,6 +3,7 @@ require "json"
 
 RAILS_REQUIREMENT = "~> 7.2.0".freeze
 # RAILS_REQUIREMENT = "~> 7.0.8".freeze
+RUBY_VERSION = "3.3.4".freeze
 
 # rails _7.1.2_ new my-app-1 --database=sqlite3 --css=tailwind --javascript=importmap --skip-jbuilder --skip-test --template ~/WorkSpace/Rails/Rails7/RailsTemplates/core-templates/template.rb
 # rails _7.1.2_ new my-app-1 --skip-test -m ~/WorkSpace/Rails/Rails7/RailsTemplates/core-templates/template.rb
@@ -56,10 +57,12 @@ def apply_template!
   apply "github/template.rb"
   git_commit "Add GitHub templates"
   apply "config/template.rb"
+  run_rubocop_autocorrections
   git_commit "Add config"
-  apply "lib/template.rb"
-  git_commit "Add lib"
+  apply "lib/tasks.rb"
+  git_commit "Add tasks"
   apply "lib/templates.rb"
+  run_rubocop_autocorrections
   git_commit "Add templates"
 
   # Make sure the templates are NOT loaded.
@@ -77,7 +80,6 @@ def apply_template!
     run("rails generate rspec:install")
     git_commit "Add RSpec"
     apply "spec/template.rb"
-    run_rubocop_autocorrections
     git_commit "Run rubocop autocorrections"
     if %w[sqlite3 mysql].include?(options[:database])
       run("rails generate uuid_v7:install")
@@ -128,11 +130,11 @@ def apply_template!
   run("overcommit --sign")
   git_commit "Add .overcommit.yml"
 
-  binstubs = %w[bundler bundler-audit erb_lint rubocop thor]
+  binstubs = %w[bundler bundler-audit erb_lint rubocop thor brakeman]
   run_with_clean_bundler_env "bundle binstubs #{binstubs.join(' ')} --force"
   git_commit "Install binstubs"
 
-  copy_file "rubocop.yml", ".rubocop.yml"
+  copy_file "rubocop.yml", ".rubocop.yml", force: true
   git_commit "Add .rubocop.yml"
 
   return unless changes_to_commit?
