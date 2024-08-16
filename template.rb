@@ -80,7 +80,7 @@ def apply_template!
     run("rails generate rspec:install")
     git_commit "Add RSpec"
     apply "spec/template.rb"
-    git_commit "Run rubocop autocorrections"
+    git_commit "Add RSpec Support templates"
     if %w[sqlite3 mysql].include?(options[:database])
       run("rails generate uuid_v7:install")
       git_commit "Add Uuid_v7 initializer"
