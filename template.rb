@@ -137,6 +137,10 @@ def apply_template!
   copy_file "rubocop.yml", ".rubocop.yml", force: true
   git_commit "Add .rubocop.yml"
 
+  run "rails generate controller Welcome home"
+  gsub_file "config/routes.rb", 'root "posts#index"', 'root "welcome#home"'
+  git_commit "Generate Welcome controller"
+
   return unless changes_to_commit?
 
   git checkout: "-b main"
