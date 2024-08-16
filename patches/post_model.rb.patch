@@ -1,0 +1,10 @@
+diff --git a/app/models/post.rb b/app/models/post.rb
+--- a/app/models/post.rb
++++ b/app/models/post.rb
+@@ -3,4 +3,6 @@
+ # Source: https://github.com/rails/rails/blob/7-1-stable/activerecord/lib/rails/generators/active_record/model/templates/model.rb.tt
+ class ::Post < ApplicationRecord
+   belongs_to :user
++
++  attribute :user_id, :uuid_v7
+ end

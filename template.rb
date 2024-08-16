@@ -141,6 +141,11 @@ def apply_template!
   gsub_file "config/routes.rb", 'root "posts#index"', 'root "welcome#home"'
   git_commit "Generate Welcome controller"
 
+  copy_dir "patches", "patches"
+  git_commit "Add patches"
+
+  run "bundle exec thor update:app"
+
   return unless changes_to_commit?
 
   git checkout: "-b main"
@@ -300,6 +305,32 @@ def git_commit(message)
 
   git add: "-A ."
   git commit: "-n -m '#{message}'"
+end
+
+def copy_dir(source, dest)
+  source_dir = Pathname.new(__dir__).join(source).expand_path
+  destination_root = Pathname.new(dest).expand_path
+
+  if !source_dir.directory?
+    say "Source directory does not exist or is not a directory", :red
+    return
+  end
+
+  # Ensure the destination directory exists
+  FileUtils.mkdir_p(destination_root)
+
+  # Iterate over each file and directory in the source directory
+  source_dir.glob("**/*").each do |file|
+    if file.directory?
+      # Ensure that the corresponding directory exists in the destination
+      FileUtils.mkdir_p(destination_root.join(file.relative_path_from(source_dir)))
+    else
+      # Copy the file to the destination directory
+      file_destination = destination_root.join(file.relative_path_from(source_dir))
+      FileUtils.cp(file, file_destination)
+      say "Copied #{file} to #{file_destination}", :green
+    end
+  end
 end
 
 apply_template!

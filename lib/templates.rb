@@ -19,8 +19,9 @@ def process_file(file, destination_root)
     end
   end
   file_destination = destination_root.join(file.relative_path_from(@templates_dir))
-  FileUtils.mkdir_p(file_destination.dirname)
-  FileUtils.cp(file, file_destination)
+  # FileUtils.mkdir_p(file_destination.dirname)
+  # FileUtils.cp(file, file_destination)
+  copy_file file, file_destination
   git_commit("Add template #{file_destination}")
 end
 

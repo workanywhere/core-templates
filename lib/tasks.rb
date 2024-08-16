@@ -14,8 +14,10 @@ end
 # Method to copy a file to the destination and commit the change
 def process_file(file, destination_root)
   file_destination = destination_root.join(file.relative_path_from(@tasks_dir))
-  FileUtils.mkdir_p(file_destination.dirname)
-  FileUtils.cp(file, file_destination)
+  # FileUtils.mkdir_p(file_destination.dirname)
+  # FileUtils.cp(file, file_destination)
+
+  copy_file file, file_destination
 
   git_commit("Add tasks #{file_destination}")
 end
