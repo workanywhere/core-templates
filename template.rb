@@ -52,8 +52,8 @@ def apply_template!
 
   apply "Rakefile.rb"
   git_commit "Add Rakefile"
-  apply "bin/template.rb"
-  git_commit "Add bin"
+  apply "bin/bins.rb"
+  git_commit "Add bin files"
   apply "github/template.rb"
   git_commit "Add GitHub templates"
   apply "config/template.rb"
