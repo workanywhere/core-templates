@@ -25,6 +25,22 @@ def apply_template!
 
   assert_valid_options
 
+  %w[
+    bundler-audit
+    erb_lint
+    rubocop
+    rubocop-performance
+    rubocop-rake
+    rubocop-rspec
+    rubocop-rspec_rails
+    rubocop-gitlab-security
+    rubocop-capybara
+    rubocop-factory_bot
+    overcommit
+  ].each do |tool|
+    run("gem install #{tool}")
+  end
+
   git :init unless preexisting_git_repo?
   git_commit "Initial commit"
 
@@ -75,22 +91,22 @@ def apply_template!
 
   empty_directory ".git/safe"
 
-  after_bundle do
-    git_commit "Initial setup"
-    run("rails generate rspec:install")
-    git_commit "Add RSpec"
-    apply "spec/template.rb"
-    git_commit "Add RSpec Support templates"
-    if %w[sqlite3 mysql].include?(options[:database])
-      run("rails generate uuid_v7:install")
-      git_commit "Add Uuid_v7 initializer"
-      run("rails generate uuid_v7:migrations --force")
-      git_commit "Add Uuid_v7 migrations"
-    end
-  end
-
   run("bundle install")
   git_commit "Run bundle install"
+
+  run("rails generate rspec:install")
+  git_commit "Add RSpec"
+
+  apply "spec/template.rb"
+  git_commit "Add RSpec Support templates"
+
+  if %w[sqlite3 mysql].include?(options[:database])
+    run("rails generate uuid_v7:install")
+    git_commit "Add Uuid_v7 initializer"
+
+    run("rails generate uuid_v7:migrations --force")
+    git_commit "Add Uuid_v7 migrations"
+  end
 
   append_to_file ".gitignore", <<~IGNORE
 
@@ -109,30 +125,16 @@ def apply_template!
   run_with_clean_bundler_env "bin/setup"
   git_commit "Run bin/setup"
 
-  %w[
-    bundler-audit
-    erb_lint
-    rubocop
-    rubocop-performance
-    rubocop-rake
-    rubocop-rspec
-    rubocop-rspec_rails
-    rubocop-gitlab-security
-    rubocop-capybara
-    rubocop-factory_bot
-    overcommit
-  ].each do |tool|
-    run("gem install #{tool}")
-  end
-
   run "overcommit --install" # if overcommit_present?
   copy_file "overcommit.yml", ".overcommit.yml", force: true
   run("overcommit --sign")
   git_commit "Add .overcommit.yml"
 
   binstubs = %w[bundler bundler-audit erb_lint rubocop thor brakeman]
-  run_with_clean_bundler_env "bundle binstubs #{binstubs.join(' ')} --force"
-  git_commit "Install binstubs"
+  binstubs.each do |binstub|
+    run_with_clean_bundler_env "bundle binstubs #{binstub} --force"
+    git_commit "Install binstub for #{binstub}"
+  end
 
   copy_file "rubocop.yml", ".rubocop.yml", force: true
   git_commit "Add .rubocop.yml"
@@ -280,8 +282,8 @@ def run_with_clean_bundler_env(cmd)
 end
 
 def run_rubocop_autocorrections
-  run_with_clean_bundler_env "bin/rubocop -A --fail-level A > /dev/null || true"
-  run_with_clean_bundler_env "bin/erblint --lint-all -a > /dev/null || true"
+  run_with_clean_bundler_env "rubocop -A --fail-level A > /dev/null || true"
+  run_with_clean_bundler_env "erblint --lint-all -a > /dev/null || true"
 end
 
 def create_database_and_initial_migration
