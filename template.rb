@@ -5,9 +5,12 @@ RAILS_REQUIREMENT = "~> 7.2.0".freeze
 # RAILS_REQUIREMENT = "~> 7.0.8".freeze
 RUBY_VERSION = "3.3.4".freeze
 
-# rails _7.1.2_ new my-app-1 --database=sqlite3 --css=tailwind --javascript=importmap --skip-jbuilder --skip-test --template ~/WorkSpace/Rails/Rails7/RailsTemplates/core-templates/template.rb
-# rails _7.1.2_ new my-app-1 --skip-test -m ~/WorkSpace/Rails/Rails7/RailsTemplates/core-templates/template.rb
-# rails _7.0.8_ new my-app-1 --skip-jbuilder --skip-test -m ~/WorkSpace/Rails/Rails7/RailsTemplates/core-templates/template.rb
+# rails _7.2.0_ new my-app-2 \
+#   --database=postgresql \
+#   --skip-test \
+#   --skip-jbuilder \
+#   --asset-pipeline=propshaft \
+#   --template ~/WorkSpace/Rails/Rails7/RailsTemplates/core-templates/template.rb
 
 def apply_template!
   assert_minimum_rails_version

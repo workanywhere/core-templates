@@ -13,8 +13,8 @@ class Db < Thor
   def start
     say "Starting db service"
 
-    run("docker network create <%= name %>-bridge-docker-network", capture: true)
-    run("docker volume create <%= name %>-data-volume", capture: true)
+    run("docker network create <%= app_name %>-bridge-docker-network", capture: true)
+    run("docker volume create <%= app_name %>-data-volume", capture: true)
 
     db_port = ENV["DB_PORT"] || 5432
 
@@ -22,11 +22,11 @@ class Db < Thor
 
     run(
       <<~CMD.gsub(/\s+/, " ").strip,
-        docker run --rm --detach --name <%= name %>-db \
+        docker run --rm --detach --name <%= app_name %>-db \
           --env POSTGRES_HOST_AUTH_METHOD=trust \
-          --network <%= name %>-bridge-docker-network \
+          --network <%= app_name %>-bridge-docker-network \
           --env PGDATA=/var/lib/postgresql/data/pgdata \
-          -v <%= name %>-data-volume:/var/lib/postgresql/data:delegated \
+          -v <%= app_name %>-data-volume:/var/lib/postgresql/data:delegated \
           --publish #{db_port}:5432 \
           postgres:14.10
       CMD
@@ -37,7 +37,7 @@ class Db < Thor
   desc "stop", "Stops the db service"
   def stop
     say "Stopping db service"
-    run("docker stop <%= name %>-db", capture: true )
+    run("docker stop <%= app_name %>-db", capture: true )
   end
 
 end
