@@ -129,27 +129,12 @@ def apply_template!
   IGNORE
   git_commit "Ignore application config and locally-installed gems"
 
-  case options[:database]
-  when "postgresql"
-    container_name = "postgres-container"
-    db_port = "5432"
-    if `docker ps --filter "name=#{container_name}" --filter "status=running" --format "{{.Names}}"`.strip.empty?
-      say "Starting PostgreSQL container", :green
-      run("docker run --rm --detach --name #{container_name} --publish #{db_port}:#{db_port} --env POSTGRES_HOST_AUTH_METHOD=trust postgres:14.10")
-    else
-      say "PostgreSQL container is already running", :yellow
-    end
-  when "mysql"
-    container_name = "mysql-container"
-    db_port = "3306"
-    if `docker ps --filter "name=#{container_name}" --filter "status=running" --format "{{.Names}}"`.strip.empty?
-      say "Starting MySQL container", :green
-      run("docker run --rm --detach --name #{container_name} --publish #{db_port}:#{db_port} --env MYSQL_ALLOW_EMPTY_PASSWORD=yes mysql:latest")
-    else
-      say "MySQL container is already running", :yellow
-    end
+  container_name = "#{self.app_name}-db"
+  if `docker ps --filter "name=#{container_name}" --filter "status=running" --format "{{.Names}}"`.strip.empty?
+    say "Starting Database container", :green
+    run("./bin/db start")
   else
-    say "Database ignored", :yellow
+    say "Database container is already running", :yellow
   end
 
   create_database_and_initial_migration
