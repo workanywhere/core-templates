@@ -28,7 +28,7 @@ end
 # docker run --rm --name mysql-container --publish 3308:3306 --env MYSQL_ALLOW_EMPTY_PASSWORD=yes -d mysql:latest
 if options[:database] == "mysql"
   insert_into_file "config/database.yml", <<-RUBY, before: "development:"
-  port: 3308
+  port: 3306
 
   RUBY
 
