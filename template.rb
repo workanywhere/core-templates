@@ -188,15 +188,17 @@ require "shellwords"
 def add_template_repository_to_source_path
   if __FILE__ =~ %r{\Ahttps?://}
     require "tmpdir"
-    source_paths.unshift(tempdir = Dir.mktmpdir("rails-template-"))
+    source_paths.unshift(tempdir = Dir.mktmpdir("core-templates-"))
     at_exit { FileUtils.remove_entry(tempdir) }
     git clone: [
       "--quiet",
-      "https://github.com/joel/rails-template.git",
+      "https://github.com/workanywhere/core-templates.git",
       tempdir
     ].map(&:shellescape).join(" ")
 
-    if (branch = __FILE__[%r{rails-template/(.+)/template.rb}, 1])
+    # https://raw.githubusercontent.com/workanywhere/core-templates/main/template.rb
+    # Make sure we are using the right branch
+    if (branch = __FILE__[%r{core-templates/(.+)/template.rb}, 1])
       Dir.chdir(tempdir) { git checkout: branch }
     end
   else
