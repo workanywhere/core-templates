@@ -132,7 +132,7 @@ def apply_template!
   container_name = "#{self.app_name}-db"
   if `docker ps --filter "name=#{container_name}" --filter "status=running" --format "{{.Names}}"`.strip.empty?
     say "Starting Database container", :green
-    run("./bin/db start")
+    run("bin/db start")
   else
     say "Database container is already running", :yellow
   end

@@ -28,20 +28,20 @@ module PostCreation
         run("rails g scaffold post title:string body:text user:references --force")
         commit "Add scaffold post"
 
-        run_with_clean_bundler_env("SKIP=RailsSchemaUpToDate git apply ./patches/posts_controller.rb.patch")
+        run_with_clean_bundler_env("SKIP=RailsSchemaUpToDate git apply patches/posts_controller.rb.patch")
         commit "Update posts controller"
 
-        run_with_clean_bundler_env("SKIP=RailsSchemaUpToDate git apply ./patches/user.rb.patch")
+        run_with_clean_bundler_env("SKIP=RailsSchemaUpToDate git apply patches/user.rb.patch")
         commit "Update user model"
 
-        run_with_clean_bundler_env("SKIP=RailsSchemaUpToDate git apply ./patches/_post_partial.html.erb.patch")
+        run_with_clean_bundler_env("SKIP=RailsSchemaUpToDate git apply patches/_post_partial.html.erb.patch")
         commit "Update post partial"
 
-        run_with_clean_bundler_env("SKIP=RailsSchemaUpToDate git apply ./patches/post_form.erb.patch")
+        run_with_clean_bundler_env("SKIP=RailsSchemaUpToDate git apply patches/post_form.erb.patch")
         commit "Update post form partial"
 
         if adapter_name !~ /PostgreSQL/
-          run_with_clean_bundler_env("SKIP=RailsSchemaUpToDate git apply ./patches/post_model.rb.patch")
+          run_with_clean_bundler_env("SKIP=RailsSchemaUpToDate git apply patches/post_model.rb.patch")
           commit "Update post model"
         end
 
@@ -66,9 +66,9 @@ module PostCreation
         commit "Add foreman to the Gemfile"
 
         if adapter_name =~ /PostgreSQL/
-          say("DB_PORT=5433 ./bin/dev")
+          say("DB_PORT=5433 bin/dev")
         else
-          say("./bin/dev")
+          say("bin/dev")
         end
       end
 
