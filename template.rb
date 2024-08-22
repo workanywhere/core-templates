@@ -331,6 +331,7 @@ def git_commit(message)
 end
 
 def copy_dir(source, dest)
+  binding.irb
   source_dir = Pathname.new(__dir__).join(source).expand_path
   destination_root = Pathname.new(dest).expand_path
 
