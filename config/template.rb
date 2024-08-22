@@ -12,13 +12,13 @@ apply "config/environments/development.rb"
 apply "config/environments/production.rb"
 apply "config/environments/test.rb"
 
-# docker run --rm --detach --name postgres-container -p 5432:5432 -e POSTGRES_HOST_AUTH_METHOD=trust -d postgres:14.10
+# docker run --rm --detach --name postgres-container -p 5432:5432 -e POSTGRES_HOST_AUTH_METHOD=trust -d postgres:latest
 if options[:database] == "postgresql"
   insert_into_file "config/database.yml", <<-RUBY, before: "development:"
   username: postgres
   password:
   host: localhost
-  port: 5432
+  port: <%= ENV.fetch("DB_PORT") { 5432 } %>
 
   RUBY
   # uncomment_lines "config/database.yml", /host: localhost/
@@ -28,7 +28,7 @@ end
 # docker run --rm --name mysql-container --publish 3308:3306 --env MYSQL_ALLOW_EMPTY_PASSWORD=yes -d mysql:latest
 if options[:database] == "mysql"
   insert_into_file "config/database.yml", <<-RUBY, before: "development:"
-  port: 3306
+  port: <%= ENV.fetch("DB_PORT") { 3306 } %>
 
   RUBY
 
