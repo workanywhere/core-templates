@@ -28,7 +28,7 @@ class Db < Thor
           --env PGDATA=/var/lib/postgresql/data/pgdata \
           -v <%= app_name %>-data-volume:/var/lib/postgresql/data:delegated \
           --publish #{db_port}:5432 \
-          postgres:14.10
+          postgres:latest
       CMD
       capture: false
     )
