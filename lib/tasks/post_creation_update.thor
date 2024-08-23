@@ -90,11 +90,7 @@ module PostCreation
 
       def run_with_clean_bundler_env(cmd)
         success = if defined?(Bundler)
-                    if Bundler.respond_to?(:with_original_env)
-                      Bundler.with_original_env { run(cmd) }
-                    else
-                      Bundler.with_unbundled_env { run(cmd) }
-                    end
+                    Bundler.with_original_env { run(cmd) }
                   else
                     run(cmd)
                   end
