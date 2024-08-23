@@ -59,6 +59,9 @@ module PostCreation
         say "Enabling letsencrypt"
         run("dokku letsencrypt:enable")
 
+        say "Running migrations"
+        run("dokku run ./bin/rails db:migrate db:seed")
+
         say "Restarting app"
         run("dokku ps:restart")
       end
@@ -66,6 +69,9 @@ module PostCreation
       desc "deploy", "Deploy the app to dokku"
       # bundle exec thor deployment:deploy
       def deploy
+        say "Running migrations"
+        run("dokku run ./bin/rails db:migrate")
+
         say "Deploying to dokku"
         run_with_clean_bundler_env("git push dokku main")
       end
