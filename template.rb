@@ -14,6 +14,29 @@ RUBY_VERSION = "3.3.4".freeze
 
 def apply_template!
   assert_minimum_rails_version
+
+  case options[:database]
+  when "postgresql"
+    unless `which psql`.strip.empty?
+      say "Using PostgreSQL", :green
+    else
+      say "PostgreSQL not found. Please install PostgreSQL and try again", :red
+      exit 1
+    end
+  when "mysql"
+    unless `which mysql`.strip.empty?
+      say "Using MySQL", :green
+    else
+      say "MySQL not found. Please install MySQL and try again", :red
+      exit 1
+    end
+  when "sqlite3"
+    say "Using SQLite3", :green
+  else
+    say "Invalid database option. Please use either 'postgresql', 'mysql', or 'sqlite3'", :red
+    exit 1
+  end
+
   add_template_repository_to_source_path
 
   self.options = options.reverse_merge(
