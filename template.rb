@@ -327,9 +327,11 @@ def git_commit(message)
 end
 
 def copy_dir(source, dest)
-  # binding.irb
-  # source_dir = Pathname.new(__dir__).join(source).expand_path
-  source_dir = Pathname.new(source_paths[0]).join(source).expand_path
+  if __FILE__ =~ %r{\Ahttps?://}
+    source_dir = Pathname.new(source_paths[0]).join(source).expand_path
+  else
+    source_dir = Pathname.new(__dir__).join(source).expand_path # This do not work with remote templates and tempdir
+  end
   destination_root = Pathname.new(dest).expand_path
 
   if !source_dir.directory?
