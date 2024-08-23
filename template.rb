@@ -17,16 +17,12 @@ def apply_template!
 
   case options[:database]
   when "postgresql"
-    unless `which psql`.strip.empty?
-      say "Using PostgreSQL", :green
-    else
+    if `which psql`.strip.empty?
       say "PostgreSQL not found. Please install PostgreSQL and try again", :red
       exit 1
     end
   when "mysql"
-    unless `which mysql`.strip.empty?
-      say "Using MySQL", :green
-    else
+    if `which mysql`.strip.empty?
       say "MySQL not found. Please install MySQL and try again", :red
       exit 1
     end
