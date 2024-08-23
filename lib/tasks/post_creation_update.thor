@@ -75,10 +75,12 @@ module PostCreation
       private
 
       def commit(message)
-        run("rubocop -A")
-        run("rubocop --regenerate-todo")
+        run("rubocop -A", capture: true)
+        run("rubocop --regenerate-todo", capture: true)
+
         run_with_clean_bundler_env("SKIP=RailsSchemaUpToDate overcommit --run")
         run_with_clean_bundler_env("SKIP=RailsSchemaUpToDate git add .")
+
         if run_with_clean_bundler_env("SKIP=RailsSchemaUpToDate git commit -m '#{message}'")
           puts "✅ Git commit successful."
         else
@@ -91,7 +93,7 @@ module PostCreation
                     if Bundler.respond_to?(:with_original_env)
                       Bundler.with_original_env { run(cmd) }
                     else
-                      Bundler.with_clean_env { run(cmd) }
+                      Bundler.with_unbundled_env { run(cmd) }
                     end
                   else
                     run(cmd)

@@ -291,7 +291,7 @@ def run_with_clean_bundler_env(cmd)
               if Bundler.respond_to?(:with_original_env)
                 Bundler.with_original_env { run(cmd) }
               else
-                Bundler.with_clean_env { run(cmd) }
+                Bundler.with_unbundled_env { run(cmd) }
               end
             else
               run(cmd)
