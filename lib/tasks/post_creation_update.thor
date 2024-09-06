@@ -65,6 +65,9 @@ module PostCreation
         run("bundle add foreman")
         commit "Add foreman to the Gemfile"
 
+        run_with_clean_bundler_env("SKIP=RailsSchemaUpToDate git apply patches/fix_test_suite.patch")
+        commit "Fix Test Suite"
+
         if adapter_name =~ /PostgreSQL/
           say("DB_PORT=5433 bin/dev")
         else

@@ -1,0 +1,149 @@
+diff --git a/app/views/posts/_post.html.erb b/app/views/posts/_post.html.erb
+--- a/app/views/posts/_post.html.erb
++++ b/app/views/posts/_post.html.erb
+@@ -1,5 +1,5 @@
+
+-<div id="<%= dom_id post %>">
++<div id="<%= dom_id post %>" class="post-card">
+   <p class="my-5">
+     <strong class="block font-medium mb-1">Title:</strong>
+     <%= post.title %>
+diff --git a/spec/controllers/posts_controller_spec.rb b/spec/controllers/posts_controller_spec.rb
+--- a/spec/controllers/posts_controller_spec.rb
++++ b/spec/controllers/posts_controller_spec.rb
+@@ -36,6 +36,8 @@ RSpec.describe PostsController do
+     skip("Add a hash of attributes invalid for your model")
+   end
+
++  let!(:user) { create(:user) }
++
+   # This should return the minimal set of values that should be in the session
+   # in order to pass any filters (e.g. authentication) defined in
+   # PostsController. Be sure to keep this updated too.
+diff --git a/spec/factories/posts.rb b/spec/factories/posts.rb
+--- a/spec/factories/posts.rb
++++ b/spec/factories/posts.rb
+@@ -3,7 +3,7 @@ FactoryBot.define do
+   factory :post do
+     title { "MyString" }
+     body { "MyText" }
+-    user { nil }
++    user
+   end
+   # Here !!!
+ end
+diff --git a/spec/requests/posts_spec.rb b/spec/requests/posts_spec.rb
+--- a/spec/requests/posts_spec.rb
++++ b/spec/requests/posts_spec.rb
+@@ -25,6 +25,8 @@ RSpec.describe "/posts" do
+     skip("Add a hash of attributes invalid for your model")
+   end
+
++  let!(:user) { create(:user) }
++
+   describe "GET /index" do
+     it "renders a successful response" do
+       Post.create! valid_attributes
+diff --git a/spec/views/posts/edit.html.tailwindcss_spec.rb b/spec/views/posts/edit.html.tailwindcss_spec.rb
+--- a/spec/views/posts/edit.html.tailwindcss_spec.rb
++++ b/spec/views/posts/edit.html.tailwindcss_spec.rb
+@@ -2,13 +2,11 @@ require "rails_helper"
+
+ RSpec.describe "posts/edit" do
+   let(:post) do
+-    Post.create!(
+-      title: "MyString",
+-      body: "MyText",
+-      user: nil
+-    )
++    create(:post)
+   end
+
++  let!(:user) { create(:user) }
++
+   before do
+     assign(:post, post)
+   end
+@@ -21,7 +19,7 @@ RSpec.describe "posts/edit" do
+
+       assert_select "textarea[name=?]", "post[body]"
+
+-      assert_select "input[name=?]", "post[user_id]"
++      assert_select "select[name=?]", "post[user_id]"
+     end
+   end
+ end
+diff --git a/spec/views/posts/index.html.tailwindcss_spec.rb b/spec/views/posts/index.html.tailwindcss_spec.rb
+--- a/spec/views/posts/index.html.tailwindcss_spec.rb
++++ b/spec/views/posts/index.html.tailwindcss_spec.rb
+@@ -1,24 +1,17 @@
+ require "rails_helper"
+
+ RSpec.describe "posts/index" do
++  let!(:user) { create(:user) }
++
+   before do
+-    assign(:posts, [
+-             Post.create!(
+-               title: "Title",
+-               body: "MyText",
+-               user: nil
+-             ),
+-             Post.create!(
+-               title: "Title",
+-               body: "MyText",
+-               user: nil
+-             )
+-           ])
++    assign(:posts, create_list(:post, 2, title: "Title",
++                                         body: "MyText"))
+   end
+
+   it "renders a list of posts" do
+     render
+-    cell_selector = "div>p"
++
++    cell_selector = "div#posts>div.post-card"
+     assert_select cell_selector, text: Regexp.new("Title".to_s), count: 2
+     assert_select cell_selector, text: Regexp.new("MyText".to_s), count: 2
+     assert_select cell_selector, text: Regexp.new(nil.to_s), count: 2
+diff --git a/spec/views/posts/new.html.tailwindcss_spec.rb b/spec/views/posts/new.html.tailwindcss_spec.rb
+--- a/spec/views/posts/new.html.tailwindcss_spec.rb
++++ b/spec/views/posts/new.html.tailwindcss_spec.rb
+@@ -4,8 +4,7 @@ RSpec.describe "posts/new" do
+   before do
+     assign(:post, Post.new(
+                     title: "MyString",
+-                    body: "MyText",
+-                    user: nil
++                    body: "MyText"
+                   ))
+   end
+
+@@ -17,7 +16,7 @@ RSpec.describe "posts/new" do
+
+       assert_select "textarea[name=?]", "post[body]"
+
+-      assert_select "input[name=?]", "post[user_id]"
++      assert_select "select[name=?]", "post[user_id]"
+     end
+   end
+ end
+diff --git a/spec/views/posts/show.html.tailwindcss_spec.rb b/spec/views/posts/show.html.tailwindcss_spec.rb
+--- a/spec/views/posts/show.html.tailwindcss_spec.rb
++++ b/spec/views/posts/show.html.tailwindcss_spec.rb
+@@ -2,11 +2,9 @@ require "rails_helper"
+
+ RSpec.describe "posts/show" do
+   before do
+-    assign(:post, Post.create!(
+-                    title: "Title",
+-                    body: "MyText",
+-                    user: nil
+-                  ))
++    assign(:post, create(:post,
++                         title: "Title",
++                         body: "MyText"))
+   end
+
+   it "renders attributes in <p>" do
