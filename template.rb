@@ -1,9 +1,8 @@
 require "bundler"
 require "json"
 
-RAILS_REQUIREMENT = "~> 7.2.0".freeze
-# RAILS_REQUIREMENT = "~> 7.0.8".freeze
-RUBY_VERSION = "3.3.4".freeze
+RAILS_REQUIREMENT = "~> 7.2.1".freeze
+RUBY_VERSION = "3.3.5".freeze
 
 # rails _7.2.0_ new my-app-2 \
 #   --database=postgresql \
@@ -87,6 +86,18 @@ def apply_template!
   git_commit "Add Procfile"
   copy_file "app.json"
   git_commit "Add Dokku Deployment Tasks Configuration"
+
+  extra_gems = []
+
+  # extra_gems = %w[
+  #   view_component
+  # ]
+
+  extra_gems.each do |gem_name|
+    run "bundle add #{gem_name}" unless gemfile_entry(gem_name)
+    run_rubocop_autocorrections
+    git_commit "Add #{gem_name}"
+  end
 
   apply "Rakefile.rb"
   git_commit "Add Rakefile"
@@ -183,6 +194,8 @@ def apply_template!
 
   copy_dir "patches", "patches"
   git_commit "Add patches"
+
+  copy_file ".rspec", force: true
 
   run "bundle exec thor update:app"
 
