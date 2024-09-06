@@ -15,6 +15,8 @@ append_to_file "Rakefile" do
     ]
   end
 
+  require "thor"
+
   desc "Run all checks"
   task default: %w[spec rubocop erblint] do
     Thor::Base.shell.new.say_status :OK, "All checks passed!"
