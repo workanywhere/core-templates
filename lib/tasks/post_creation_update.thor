@@ -68,6 +68,13 @@ module PostCreation
         run_with_clean_bundler_env("SKIP=RailsSchemaUpToDate git apply patches/fix_test_suite.patch")
         commit "Fix Test Suite"
 
+        insert_into_file "app/models/post.rb", "  validates :title, presence: true\n", :after => "belongs_to :user\n"
+        commit "Add validation to post model"
+
+        run("mkdir -p spec/system")
+        run("cp -v patches/posts_spec.rb spec/system/posts_spec.rb")
+        commit "Add posts system spec"
+
         if adapter_name =~ /PostgreSQL/
           say("DB_PORT=5433 bin/dev")
         else
