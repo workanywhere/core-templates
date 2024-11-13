@@ -46,7 +46,8 @@ module PostCreation
         end
 
         append_to_file "db/seeds.rb", <<~RUBY
-          User.find_or_create_by!(name: "John Doe")
+          user = User.find_or_create_by!(name: "John Doe")
+          Post.find_or_create_by!(title: "Hello World", body: "This is a test post", user: user)
         RUBY
         commit "Seed content"
 
