@@ -36,3 +36,13 @@ if options[:database] == "mysql"
     "0.0.0.0"
   end
 end
+
+if options[:database] == "sqlite3"
+  insert_into_file "config/database.yml", <<-RUBY, before: "development:"
+  pragmas:
+    # level of database durability, 2 = "FULL" (sync on every write), other values include 1 = "NORMAL" (sync every 1000 written pages) and 0 = "NONE"
+    # https://www.sqlite.org/pragma.html#pragma_synchronous
+    synchronous: "FULL"
+
+  RUBY
+end
