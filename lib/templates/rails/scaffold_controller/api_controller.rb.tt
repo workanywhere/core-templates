@@ -12,13 +12,13 @@ class <%= controller_class_name %>Controller < ApplicationController
   def index
     @<%= plural_table_name %> = <%= orm_class.all(class_name) %>
 
-    render jsonapi: <%= "@#{plural_table_name}" %>, status: :ok
+    render json: <%= "@#{plural_table_name}" %>, status: :ok
   end
 
   # GET <%= route_url %>/<UUID>
   # @return [String] Json Response
   def show
-    render jsonapi: <%= "@#{singular_table_name}" %>
+    render json: <%= "@#{singular_table_name}" %>
   end
 
   # POST <%= route_url %>
@@ -27,9 +27,9 @@ class <%= controller_class_name %>Controller < ApplicationController
     @<%= singular_table_name %> = <%= orm_class.build(class_name, "#{singular_table_name}_params") %>
 
     if @<%= orm_instance.save %>
-      render jsonapi: <%= "@#{singular_table_name}" %>, status: :created, location: <%= "@#{singular_table_name}" %>
+      render json: <%= "@#{singular_table_name}" %>, status: :created, location: <%= "@#{singular_table_name}" %>
     else
-      render jsonapi_errors: <%= "@#{orm_instance.errors}" %>, status: :unprocessable_entity
+      render json_errors: <%= "@#{orm_instance.errors}" %>, status: :unprocessable_entity
     end
   end
 
@@ -37,9 +37,9 @@ class <%= controller_class_name %>Controller < ApplicationController
   # @return [String] Json Response
   def update
     if @<%= orm_instance.update("#{singular_table_name}_params") %>
-      render jsonapi: <%= "@#{singular_table_name}" %>
+      render json: <%= "@#{singular_table_name}" %>
     else
-      render jsonapi_errors: <%= "@#{orm_instance.errors}" %>, status: :unprocessable_entity
+      render json_errors: <%= "@#{orm_instance.errors}" %>, status: :unprocessable_entity
     end
   end
 
@@ -60,9 +60,9 @@ class <%= controller_class_name %>Controller < ApplicationController
     # @return [ActionController::Parameters]
     def <%= "#{singular_table_name}_params" %>
       <%- if attributes_names.empty? -%>
-      jsonapi_deserialize(params, only: [])
+      json_deserialize(params, only: [])
       <%- else -%>
-      jsonapi_deserialize(params, only: [<%= permitted_params %>])
+      json_deserialize(params, only: [<%= permitted_params %>])
       <%- end -%>
     end
 end
