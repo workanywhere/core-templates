@@ -72,6 +72,11 @@ module PostCreation
         insert_into_file "app/models/post.rb", "  validates :title, presence: true\n", :after => "belongs_to :user\n"
         commit "Add validation to post model"
 
+        if adapter_name !~ /PostgreSQL/
+          insert_into_file "app/models/post.rb", "  attribute :user_id, :uuid_v7\n", :after => "belongs_to :user\n"
+          commit "Declare Foreign Key Type"
+        end
+
         run("mkdir -p spec/system")
         run("cp -v patches/posts_spec.rb spec/system/posts_spec.rb")
         commit "Add posts system spec"
