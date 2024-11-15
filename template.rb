@@ -134,7 +134,7 @@ def apply_template!
   run("rails generate rspec:install")
   git_commit "Add RSpec"
 
-  run("rails generate tailwindcss:install")
+  run("bundle exec tailwindcss init")
   git_commit "Add TailwindCSS"
 
   apply "spec/template.rb"

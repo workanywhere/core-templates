@@ -34,6 +34,10 @@ gem "stimulus-rails"
 
 # Use Tailwind CSS [https://github.com/rails/tailwindcss-rails]
 gem "tailwindcss-rails"
+# https://tailwindcss.com/blog/standalone-cli # TL;DR no Node.js or npm required.
+gem "tailwindcss-ruby"
+
+gem "kamal"
 
 # Use Redis adapter to run Action Cable in production
 # gem "redis", ">= 4.0.1"
