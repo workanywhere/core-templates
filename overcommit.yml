@@ -8,7 +8,7 @@ PreCommit:
   ErbLint:
     enabled: true
     required_executable: bundle
-    command: ["bundle", "exec", "erblint"]
+    command: ["bundle", "exec", "erb_lint"]
     include: "**/*.html.erb"
 
   FixMe:

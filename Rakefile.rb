@@ -18,12 +18,12 @@ append_to_file "Rakefile" do
   require "thor"
 
   desc "Run all checks"
-  task default: %w[spec rubocop erblint] do
+  task default: %w[spec rubocop erb_lint] do
     Thor::Base.shell.new.say_status :OK, "All checks passed!"
   end
 
   desc "Apply auto-corrections"
-  task fix: %w[rubocop:autocorrect_all erblint:autocorrect] do
+  task fix: %w[rubocop:autocorrect_all erb_lint:autocorrect] do
     Thor::Base.shell.new.say_status :OK, "All fixes applied!"
   end
   RUBY

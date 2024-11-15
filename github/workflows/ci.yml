@@ -33,8 +33,8 @@ jobs:
           gem install rubocop-factory_bot
           rubocop --parallel
       -
-        name: "Lint / erblint"
-        run: bin/erblint --lint-all
+        name: "Lint / erb_lint"
+        run: bin/erb_lint --lint-all
       -
         name: "Security / brakeman"
         run: |
