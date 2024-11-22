@@ -146,6 +146,9 @@ def apply_template!
     git_commit "Add Uuid_v7 migrations"
   end
 
+  run("bundle exec rails g rack_mini_profiler:install")
+  git_commit "Add Rack Mini Profiler"
+
   append_to_file ".gitignore", <<~IGNORE
 
     # Ignore application config.
