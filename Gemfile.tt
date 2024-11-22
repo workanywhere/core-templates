@@ -91,6 +91,9 @@ group :development do
 
   # For call-stack profiling flamegraphs
   gem "stackprof"
+
+  # For CPU profiling flamegraphs
+  gem "flamegraph"
 end
 
 group :development, :test do
