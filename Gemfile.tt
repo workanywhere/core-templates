@@ -84,7 +84,7 @@ group :development do
   # gem "spring"
 
   # For performance profiling
-  gem "rack-mini-profiler"
+  gem "rack-mini-profiler", require: false
 
   # For memory profiling
   gem "memory_profiler"
