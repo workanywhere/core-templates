@@ -89,9 +89,7 @@ def apply_template!
 
   extra_gems = []
 
-  # extra_gems = %w[
-  #   view_component
-  # ]
+  # extra_gems << "view_component"
 
   extra_gems.each do |gem_name|
     run "bundle add #{gem_name}" unless gemfile_entry(gem_name)
