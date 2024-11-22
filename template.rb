@@ -149,6 +149,9 @@ def apply_template!
   run("bundle exec rails g rack_mini_profiler:install")
   git_commit "Add Rack Mini Profiler"
 
+  run("yes | bundle exec rails g bullet:install")
+  git_commit "Add Bullet"
+
   append_to_file ".gitignore", <<~IGNORE
 
     # Ignore application config.
