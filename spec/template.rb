@@ -25,3 +25,5 @@ process_templates
 append_to_file "spec/rails_helper.rb", <<~RUBY
 Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 RUBY
+
+uncomment_lines "spec/rails_helper.rb", /config.infer_spec_type_from_file_location/
