@@ -2,8 +2,9 @@ insert_into_file "config/application.rb", <<-RUBY, before: "  end"
 
     logger           = ActiveSupport::Logger.new($stdout)
     logger.formatter = config.log_formatter
+    config.log_tags  = [:request_id]
     config.logger    = ActiveSupport::TaggedLogging.new(logger)
-    config.log_level = :debug
+    config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "debug").to_sym
 
     config.active_record.schema_format = :ruby # :sql
 
