@@ -4,6 +4,9 @@ uncomment_lines "config/environments/production.rb", /raise_delivery_errors =/
 
 comment_lines "config/environments/production.rb", /config\.active_job\.queue_adapter =/
 comment_lines "config/environments/production.rb", /config\.active_job\.queue_name_prefix =/
+comment_lines "config/environments/production.rb", /config.log_tags/
+comment_lines "config/environments/production.rb", /config.logger/
+comment_lines "config/environments/production.rb", /config.log_level/
 
 gsub_file "config/environments/production.rb", /raise_delivery_errors = false/, "raise_delivery_errors = true"
 gsub_file "config/environments/production.rb", /\bSTDOUT\b/, "$stdout"
