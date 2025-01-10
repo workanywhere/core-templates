@@ -83,3 +83,12 @@ jobs:
         run: |
           gem install bundle-audit
           bundle-audit check --update -v
+      -
+        name: "Install Dependencies"
+        run: bundle install --jobs 4 --retry 3
+      -
+        name: "Initialize Database"
+        run: bundle exec rake db:create db:schema:load
+      -
+        name: "Run Tests"
+        run: TEST_BROWSER=rack_test bundle exec rake
