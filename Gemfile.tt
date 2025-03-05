@@ -114,7 +114,7 @@ group :development, :test do
   gem "factory_bot_rails"
   gem "ffaker"
 
-  gem "bullet"
+  gem "bullet" # Use https://github.com/charkost/prosopite instead
 end
 
 group :test do
