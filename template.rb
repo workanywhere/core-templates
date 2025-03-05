@@ -2,7 +2,7 @@ require "bundler"
 require "json"
 
 RAILS_REQUIREMENT = "8.0.1".freeze
-RUBY_VERSION = "3.4.1".freeze
+RUBY_VERSION = "3.4.2".freeze
 
 # rails _7.2.0_ new my-app-2 \
 #   --database=postgresql \
