@@ -13,10 +13,12 @@ module PostCreation
 
       desc "configuration", "Run script to configure the deployment"
 
+      method_option :name, type: :string, aliases: "-n", desc: "Specify the application name"
+
       # bundle exec thor deployment:configuration
       def configuration
         say "Checking if dokku is installed"
-        app_name = get_app_name
+        app_name = options[:name] || get_app_name
 
         inside "~" do
           if run("DOKKU_HOST=dokku.me dokku apps:list | grep #{app_name}")
@@ -86,8 +88,8 @@ module PostCreation
 
         # Sanitize the app name
         sanitized_name = current_app_name.downcase
-                          .gsub("_", "") # Remove underscores
-                          .gsub("-", "") # Remove dashes
+                                          .delete("_") # Remove underscores
+                                          .delete("-") # Remove dashes
 
         # Verify the sanitized name
         if sanitized_name.match?(/^[a-z][a-z0-9]*$/)
