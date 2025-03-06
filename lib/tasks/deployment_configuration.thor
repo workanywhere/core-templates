@@ -15,7 +15,7 @@ module PostCreation
 
       method_option :name, type: :string, aliases: "-n", desc: "Specify the application name"
 
-      # bundle exec thor deployment:configuration
+      # bundle exec thor deployment:configuration --name hello-world-app
       def configuration
         say "Checking if dokku is installed"
         app_name = options[:name] || get_app_name
