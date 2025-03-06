@@ -40,6 +40,13 @@ class Db < Thor
     run("docker stop <%= app_name %>-db", capture: true )
   end
 
+  desc "teardown", "Stops and removes the db service"
+  def teardown
+    stop
+    run("docker network rm <%= app_name %>-bridge-docker-network", capture: true)
+    run("docker volume rm <%= app_name %>-data-volume", capture: true)
+  end
+
 end
 
 Db.start(ARGV)

@@ -25,8 +25,14 @@ module PostCreation
 
         commit "Add scaffold user"
 
+        run("rails db:migrate")
+        commit "Run migrations"
+
         run("rails g scaffold post title:string body:text user:references --force")
         commit "Add scaffold post"
+
+        run("rails db:migrate")
+        commit "Run migrations"
 
         run_with_clean_bundler_env("SKIP=RailsSchemaUpToDate git apply patches/posts_controller.rb.patch")
         commit "Update posts controller"
@@ -51,23 +57,29 @@ module PostCreation
         RUBY
         commit "Seed content"
 
-        if adapter_name =~ /Mysql2/
-          current_directory_name = File.basename(Dir.pwd)
-          say "Creating MySQL databases for #{current_directory_name}_development and #{current_directory_name}_test"
-          run("docker exec mysql-container bash -c \"mysql -u root -e 'CREATE DATABASE IF NOT EXISTS #{current_directory_name}_development;'\"")
-          run("docker exec mysql-container bash -c \"mysql -u root -e 'CREATE DATABASE IF NOT EXISTS #{current_directory_name}_test;'\"")
-          run("db:migrate db:seed db:schema:dump")
-        else
-          run("rails db:drop db:create db:migrate db:seed")
-        end
-        commit "Updated Schema"
+        run("bin/rails db:seed")
+
+        # if adapter_name =~ /Mysql2/
+        #   current_directory_name = File.basename(Dir.pwd)
+        #   say "Creating MySQL databases for #{current_directory_name}_development and #{current_directory_name}_test"
+        #   run("docker exec mysql-container bash -c \"mysql -u root -e 'CREATE DATABASE IF NOT EXISTS #{current_directory_name}_development;'\"")
+        #   run("docker exec mysql-container bash -c \"mysql -u root -e 'CREATE DATABASE IF NOT EXISTS #{current_directory_name}_test;'\"")
+        #   run("db:migrate db:seed db:schema:dump")
+        # else
+        #   run("bin/setup")
+        #   run("bin/rails db:seed")
+        # end
+        # run("bin/rails db:seed")
+        # commit "Seed content"
 
         say("Adding foreman to the Gemfile")
         run("bundle add foreman")
         commit "Add foreman to the Gemfile"
 
-        run_with_clean_bundler_env("SKIP=RailsSchemaUpToDate git apply patches/fix_test_suite.patch")
-        commit "Fix Test Suite"
+        1.upto(8) do |i|
+          run_with_clean_bundler_env("SKIP=RailsSchemaUpToDate git apply patches/fix_test_suite-#{i}.patch")
+          commit "Fix Test Suite #{i}"
+        end
 
         insert_into_file "app/models/post.rb", "  validates :title, presence: true\n", :after => "belongs_to :user\n"
         commit "Add validation to post model"

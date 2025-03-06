@@ -54,7 +54,6 @@ def apply_template!
     rubocop-rake
     rubocop-rspec
     rubocop-rspec_rails
-    rubocop-gitlab-security
     rubocop-capybara
     rubocop-factory_bot
     overcommit
@@ -74,8 +73,8 @@ def apply_template!
   copy_file "editorconfig", ".editorconfig"
   git_commit "Add .editorconfig"
 
-  copy_file "erb-lint.yml", ".erb-lint.yml"
-  git_commit "Add .erb-lint.yml"
+  copy_file "erb-lint.yml", ".erb_lint.yml"
+  git_commit "Add .erb_lint.yml"
 
   template "ruby-version.tt", ".ruby-version", force: true
   git_commit "Add .ruby-version"
@@ -132,9 +131,6 @@ def apply_template!
   run("rails generate rspec:install")
   git_commit "Add RSpec"
 
-  run("bundle exec tailwindcss init")
-  git_commit "Add TailwindCSS"
-
   apply "spec/template.rb"
   git_commit "Add RSpec Support templates"
 
@@ -164,6 +160,9 @@ def apply_template!
   git_commit "Ignore application config and locally-installed gems"
 
   container_name = "#{self.app_name}-db"
+
+  run("bin/db teardown") # Make sure we start from a clean slate, especially when replaying the template
+
   if `docker ps --filter "name=#{container_name}" --filter "status=running" --format "{{.Names}}"`.strip.empty?
     say "Starting Database container", :green
     run("bin/db start")

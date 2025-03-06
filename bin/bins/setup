@@ -6,7 +6,10 @@ def setup!
     # run "overcommit --install" if overcommit_present?
     copy "example.env", ".env.development"
     test_local_env_contains_required_keys
-    run "bin/rails tmp:create db:prepare"
+    run "bin/rails tmp:create"
+    # run "bin/rails db:drop" # Drop the database, usefull if you re-run the setup
+    run "bin/rails db:prepare" # Run setup if database does not exist, or run migrations if it does
+    # run "bin/rails db:setup" # Create all databases, load all schemas, and initialize with the seed data (use db:reset to also drop all databases first)
   end
 end
 

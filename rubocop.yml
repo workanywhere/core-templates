@@ -1,12 +1,14 @@
 require:
   - rubocop-capybara
   - rubocop-factory_bot
-  - rubocop-rspec
   - rubocop-rspec_rails
+  - rubocop-rails
+
+plugins:
+  - rubocop-rspec
   - rubocop-performance
   - rubocop-rails
   - rubocop-rake
-  - rubocop-gitlab-security
 
 inherit_mode:
   merge:
