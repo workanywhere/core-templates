@@ -1,11 +1,15 @@
 # Usage
 
+```
+Ruby 3.4.2
+Rails 8.0.1
+```
+
 ```shell
-rails _7.2.0_ new my-app-1 \
+rails _8.0.1_ new my-app-1 \
   --database=postgresql \
   --skip-test \
   --skip-jbuilder \
-  --asset-pipeline=propshaft \
   --template https://raw.githubusercontent.com/workanywhere/core-templates/main/template.rb
 ```
 
