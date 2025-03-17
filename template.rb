@@ -345,9 +345,10 @@ end
 def create_database_and_initial_migration
   return if Dir["db/migrate/**/*.rb"].any?
 
-  run_with_clean_bundler_env "bin/db setup"
+  run_with_clean_bundler_env "bin/db prepare"
   run_with_clean_bundler_env "bin/rails generate migration initial_migration"
   run_with_clean_bundler_env "bin/rails db:prepare"
+  run_with_clean_bundler_env "bin/web prepare" # Call build and setup first
 end
 
 def rewrite_json(file)
