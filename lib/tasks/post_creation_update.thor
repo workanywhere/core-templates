@@ -24,10 +24,12 @@ module PostCreation
         # Those line will be removed in the future, once the trailing whitespace is fixed in the Rails service-worker.js file
 
         run("rails db:migrate")
+        run("rails db:schema:dump")
         commit message: "Add scaffold user", skips: ["RailsSchemaUpToDate"] # I do not understand why this is necessary, db:migrate should have updated the schema
 
         run("rails g scaffold post title:string body:text user:references --force")
         run("rails db:migrate")
+        run("rails db:schema:dump")
         commit message: "Add scaffold post", skips: ["RailsSchemaUpToDate"] # I do not understand why this is necessary, db:migrate should have updated the schema
 
         run_with_clean_bundler_env("git apply patches/posts_controller.rb.patch")
