@@ -1,0 +1,91 @@
+#!/usr/bin/env ruby
+
+require "thor"
+
+# https://hub.docker.com/_/mysql
+
+class Db < Thor
+  include Thor::Actions
+
+  def self.exit_on_failure?
+    false
+  end
+
+  desc "start", "Starts the db service"
+  def start(capture: false)
+    say "Starting db service"
+
+    db_port = ENV.fetch("DB_PORT", 3306)
+
+    say "Starting db service on port #{db_port}"
+
+    run(
+      <<~CMD.gsub(/\s+/, " ").strip,
+        docker run --rm --detach --name <%= app_name %>-db \
+          --env MYSQL_ALLOW_EMPTY_PASSWORD=yes \
+          --network <%= app_name %>-bridge-docker-network \
+          -v <%= app_name %>-data-volume:/var/lib/mysql \
+          -v "$(pwd)/config/production.sql":"/production.sql" \
+          --publish #{db_port}:3306 \
+          mysql:latest
+      CMD
+      capture:
+    )
+
+    wait_for_db_ready("<%= app_name %>-db")
+  end
+
+  desc "stop", "Stops the db service"
+  def stop
+    say "Stopping db service"
+    run("docker stop <%= app_name %>-db", capture: true )
+  end
+
+  desc "setup", "Sets up the db service"
+  def setup
+    db_user = ENV.fetch("MYSQL_USER", "root")
+
+    run("docker network create <%= app_name %>-bridge-docker-network", capture: true)
+    run("docker volume create <%= app_name %>-data-volume", capture: true)
+    start(capture: true)
+    run("docker exec -i <%= app_name %>-db bash -c \"mysql -u #{db_user} < production.sql\"", capture: false)
+    run("docker exec <%= app_name %>-db bash -c \"mysql -u #{db_user} -e 'SHOW DATABASES;'\"", capture: false)
+  end
+
+  desc "teardown", "Stops and removes the db service"
+  def teardown
+    stop
+    run("docker network rm <%= app_name %>-bridge-docker-network", capture: true)
+    run("docker volume rm <%= app_name %>-data-volume", capture: true)
+  end
+
+  desc "console", "Opens a mysql console"
+  def console
+    run("docker exec -it <%= app_name %>-db mysql -u root", capture: false)
+  end
+
+  private
+
+  # Wait until MySQL is accepting connections, or time out
+  def wait_for_db_ready(container_name)
+    max_attempts = 10
+    say "Waiting for MySQL in '#{container_name}' to be ready..."
+
+    max_attempts.times do |attempt|
+      # Try a simple "SELECT 1" to confirm MySQL is alive
+      if system("docker exec #{container_name} mysql -u root -e 'SELECT 1' > /dev/null 2>&1")
+        say "MySQL is ready!"
+        return
+      else
+        say "Attempt #{attempt + 1}/#{max_attempts}: Not ready yet. Retrying in 2s..."
+        sleep 2
+      end
+    end
+
+    # If we get here, MySQL never responded in time
+    say "ERROR: MySQL did not become ready after #{max_attempts} attempts."
+    exit(1)  # or raise an error, etc.
+  end
+end
+
+Db.start(ARGV)
