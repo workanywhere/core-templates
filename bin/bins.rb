@@ -25,6 +25,13 @@ def process_file(file, destination_root)
   end
   chmod file_destination, "+x"
 
+  case options[:database]
+  when "postgresql"
+    gsub_file "bin/db", "db.thor.rb", "db.thor.postgresql.rb"
+  when "mysql"
+    gsub_file "bin/db", "db.thor.rb", "db.thor.mysql.rb"
+  end
+
   git_commit("Add bins #{file_destination}")
 end
 
