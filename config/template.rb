@@ -17,7 +17,7 @@ if options[:database] == "postgresql"
   insert_into_file "config/database.yml", <<-RUBY, before: "development:"
   username: postgres
   password:
-  host: localhost
+  host: <%= ENV.fetch("DB_HOST") { "localhost" } %>
   port: <%= ENV.fetch("DB_PORT") { 5432 } %>
 
   RUBY
@@ -28,6 +28,7 @@ end
 # docker run --rm --name mysql-container --publish 3308:3306 --env MYSQL_ALLOW_EMPTY_PASSWORD=yes -d mysql:latest
 if options[:database] == "mysql"
   insert_into_file "config/database.yml", <<-RUBY, before: "development:"
+  host: <%= ENV.fetch("DB_HOST") { "localhost" } %>
   port: <%= ENV.fetch("DB_PORT") { 3306 } %>
 
   RUBY
@@ -35,6 +36,16 @@ if options[:database] == "mysql"
   gsub_file "config/database.yml", /localhost/ do |_match|
     "0.0.0.0"
   end
+
+  gsub_file "config/database.yml", "adapter: mysql2", "adapter: trilogy"
+
+  gsub_file 'config/database.yml',
+          /^(\s*username:\s*).+$/,
+          '\1<%= ENV.fetch("MYSQL_USER") { "root" } %>'
+
+  gsub_file 'config/database.yml',
+          /^(\s*password:\s*).+$/,
+          '\1<%= ENV.fetch("MYSQL_PASSWORD") { "" } %>'
 end
 
 if options[:database] == "sqlite3"
@@ -46,3 +57,6 @@ if options[:database] == "sqlite3"
 
   RUBY
 end
+
+# template file, file_destination, force: true
+template "config/production.sql.tt", "config/production.sql", force: true
