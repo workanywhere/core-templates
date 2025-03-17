@@ -1,0 +1,77 @@
+#!/usr/bin/env ruby
+
+require "thor"
+
+class Web < Thor
+  include Thor::Actions
+
+  def self.exit_on_failure?
+    false
+  end
+
+  desc "build", "Build the docker container"
+  def build(capture: false)
+    say "Building the docker container"
+
+    run(
+      <<~CMD.gsub(/\s+/, " ").strip,
+        docker build . \
+          --tag workanywhere/<%= app_name %>-app:latest \
+          -f Dockerfile
+      CMD
+      capture:
+    )
+  end
+
+  desc "setup", "Setup the web service"
+  def setup(capture: false)
+    build
+    say "Setting up the web service"
+
+    run("docker network create <%= app_name %>-bridge-docker-network", capture: true)
+  end
+
+  desc "prepare", "Prepare the web service"
+  def prepare(capture: false)
+    setup(capture: true)
+    say "Preparing the web service"
+
+    run("RAILS_ENV=production bin/rails db:migrate db:seed", capture:)
+  end
+
+  desc "start", "Start the web service"
+  def start(capture: false)
+    say "Starting the web service"
+
+    run(
+      <<~CMD.gsub(/\s+/, " ").strip,
+        docker run --rm \
+          --name <%= app_name %>-app \
+          --publish 8080:3025 \
+          --env DB_HOST=<%= app_name %>-db \
+          --env RAILS_MASTER_KEY=$(cat config/master.key) \
+          --network <%= app_name %>-bridge-docker-network \
+          workanywhere/<%= app_name %>-app:latest bin/rails s -p 3025 -b 0.0.0.0
+      CMD
+      capture:
+    )
+  end
+
+  desc "stop", "Stops the web service"
+  def stop(capture: false)
+    say "Stopping the web service"
+
+    run("docker stop <%= app_name %>-app", capture:)
+  end
+
+  desc "teardown", "Teardown the web service"
+  def teardown(capture: false)
+    stop(capture: true)
+    say "Tearing down the web service"
+
+    run("docker image rm workanywhere/<%= app_name %>-app:latest", capture:)
+  end
+
+end
+
+Web.start(ARGV)
