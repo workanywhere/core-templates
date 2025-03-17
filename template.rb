@@ -165,7 +165,7 @@ def apply_template!
 
   if `docker ps --filter "name=#{container_name}" --filter "status=running" --format "{{.Names}}"`.strip.empty?
     say "Starting Database container", :green
-    run("bin/db start")
+    run("bin/db setup") # First time setup, it calls start
   else
     say "Database container is already running", :yellow
   end
@@ -203,7 +203,7 @@ def apply_template!
   run "bundle exec thor update:app"
 
   # The psych gem (which handles YAML parsing in Ruby) is trying to compile its native extension but can’t find the YAML header file (yaml.h)
-  gsub_file "Dockerfile", "curl libjemalloc2 libvips", "curl libjemalloc2 libyaml-dev libvips"
+  gsub_file "Dockerfile", "libjemalloc2 libvips", "libjemalloc2 libyaml-dev libvips"
   git_commit "Add libyaml-dev to Dockerfile"
 
   return unless changes_to_commit?
@@ -345,8 +345,9 @@ end
 def create_database_and_initial_migration
   return if Dir["db/migrate/**/*.rb"].any?
 
-  run_with_clean_bundler_env "bin/rails db:create"
+  run_with_clean_bundler_env "bin/db setup"
   run_with_clean_bundler_env "bin/rails generate migration initial_migration"
+  run_with_clean_bundler_env "bin/rails db:prepare"
 end
 
 def rewrite_json(file)
