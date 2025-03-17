@@ -109,8 +109,8 @@ module PostCreation
         run("rubocop -A", capture: true)
         run("rubocop --regenerate-todo", capture: true)
 
+        run_with_clean_bundler_env("git add .")
         run_with_clean_bundler_env("#{skip_command} overcommit --run")
-        run_with_clean_bundler_env("#{skip_command} git add .")
 
         if run_with_clean_bundler_env("#{skip_command} git commit -m '#{message}'")
           puts "✅ Git commit successful."
