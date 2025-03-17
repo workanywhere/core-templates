@@ -1,0 +1,4 @@
+CREATE DATABASE IF NOT EXISTS `<%= app_name %>_production`;
+CREATE DATABASE IF NOT EXISTS `<%= app_name %>_production_cache`;
+CREATE DATABASE IF NOT EXISTS `<%= app_name %>_production_queue`;
+CREATE DATABASE IF NOT EXISTS `<%= app_name %>_production_cable`;
