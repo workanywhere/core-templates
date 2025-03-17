@@ -203,7 +203,11 @@ def apply_template!
   run "bundle exec thor update:app"
 
   # The psych gem (which handles YAML parsing in Ruby) is trying to compile its native extension but can’t find the YAML header file (yaml.h)
-  gsub_file "Dockerfile", "libjemalloc2 libvips", "libjemalloc2 libyaml-dev libvips"
+  # gsub_file "Dockerfile", "libjemalloc2 libvips", "libjemalloc2 libyaml-dev libvips"
+  gsub_file "Dockerfile",
+    /libjemalloc2\s+libvips/,
+    "libjemalloc2 libyaml-dev libvips"
+
   git_commit "Add libyaml-dev to Dockerfile"
 
   return unless changes_to_commit?
