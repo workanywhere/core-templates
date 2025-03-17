@@ -27,12 +27,6 @@ end
 
 # docker run --rm --name mysql-container --publish 3308:3306 --env MYSQL_ALLOW_EMPTY_PASSWORD=yes -d mysql:latest
 if options[:database] == "mysql"
-  insert_into_file "config/database.yml", <<-RUBY, before: "development:"
-  host: <%= ENV.fetch("DB_HOST") { "localhost" } %>
-  port: <%= ENV.fetch("DB_PORT") { 3306 } %>
-
-  RUBY
-
   gsub_file "config/database.yml", /localhost/ do |_match|
     "0.0.0.0"
   end
@@ -43,9 +37,14 @@ if options[:database] == "mysql"
           /^(\s*username:\s*).+$/,
           '\1<%= ENV.fetch("MYSQL_USER") { "root" } %>'
 
-  gsub_file 'config/database.yml',
-          /^(\s*password:\s*).+$/,
-          '\1<%= ENV.fetch("MYSQL_PASSWORD") { "" } %>'
+  gsub_file "config/database.yml",
+          /^(\s*password:).*$/,
+          '\1 <%= ENV.fetch("MYSQL_PASSWORD") { "" } %>'
+
+  insert_into_file "config/database.yml", <<-RUBY, after: "encoding: utf8mb4\n"
+  host: <%= ENV.fetch("DB_HOST") { "localhost" } %>
+  port: <%= ENV.fetch("DB_PORT") { 3306 } %>
+  RUBY
 end
 
 if options[:database] == "sqlite3"
