@@ -47,7 +47,12 @@ class Db < Thor
 
     run("docker network create <%= app_name %>-bridge-docker-network", capture: true)
     run("docker volume create <%= app_name %>-data-volume", capture: true)
+  end
+
+  desc "prepare", "Creates the database and loads the schema"
+  def prepare
     start(capture: true)
+    db_user = ENV.fetch("MYSQL_USER", "root")
     run("docker exec -i <%= app_name %>-db bash -c \"mysql -u #{db_user} < production.sql\"", capture: false)
     run("docker exec <%= app_name %>-db bash -c \"mysql -u #{db_user} -e 'SHOW DATABASES;'\"", capture: false)
   end
