@@ -1,7 +1,7 @@
 # Source: https://github.com/rails/rails/blob/v7.1.2/activerecord/lib/rails/generators/active_record/migration/templates/create_table_migration.rb.tt
 class <%= migration_class_name %> < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
   def change
-<% if ["SQLite", "Mysql2"].include?(ActiveRecord::Base.connection.adapter_name) -%>
+<% if ["SQLite", "Mysql2", "Trilogy"].include?(ActiveRecord::Base.connection.adapter_name) -%>
     create_table :<%= table_name %>, id: false do |t|
       t.binary :id, limit: 16, null: false, index: { unique: true }, primary_key: true
 <% else -%>
@@ -13,7 +13,7 @@ class <%= migration_class_name %> < ActiveRecord::Migration[<%= ActiveRecord::Mi
 <% elsif attribute.token? -%>
       t.string :<%= attribute.name %><%= attribute.inject_options %>
 <% elsif attribute.reference? -%>
-<% if ["SQLite", "Mysql2"].include?(ActiveRecord::Base.connection.adapter_name) -%>
+<% if ["SQLite", "Mysql2", "Trilogy"].include?(ActiveRecord::Base.connection.adapter_name) -%>
 
       # t.binary :<%= attribute.name %>_id, null: false, limit: 16
       # t.foreign_key :<%= attribute.name %>s, column: :<%= attribute.name %>_id, primary_key: "id"
