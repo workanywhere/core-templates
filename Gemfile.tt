@@ -12,13 +12,14 @@ gem "propshaft"
 
 <% if options[:database] == "postgresql" -%>
 # Use postgresql as the database for Active Record
-gem "pg", "~> 1.5"
+gem "pg"
 <% elsif options[:database] == "mysql" -%>
 # Use mysql as the database for Active Record
-gem "mysql2", "~> 0.5"
+# https://github.blog/open-source/maintainers/introducing-trilogy-a-new-database-adapter-for-ruby-on-rails/
+gem "trilogy" # https://github.com/trilogy-libraries/trilogy
 <% elsif options[:database] == "sqlite3" -%>
 # Use sqlite3 as the database for Active Record
-gem "activerecord-enhancedsqlite3-adapter", "~> 0.8"
+gem "activerecord-enhancedsqlite3-adapter"
 <% end -%>
 
 # Use the Puma web server [https://github.com/puma/puma]
