@@ -110,6 +110,8 @@ def apply_template!
   apply "lib/templates.rb"
   run_rubocop_autocorrections
   git_commit "Add templates"
+  apply "dockerfiles/template.rb"
+  git_commit "Add dockerfiles"
 
   # Make sure the templates are NOT loaded.
   # Ideally template files should get the extension .tt, so there are ignored by default.
