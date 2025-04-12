@@ -44,11 +44,6 @@ module PostCreation
         run_with_clean_bundler_env("git apply patches/post_form.erb.patch")
         commit message: "Update post form partial"
 
-        if adapter_name !~ /PostgreSQL/
-          run_with_clean_bundler_env("git apply patches/post_model.rb.patch")
-          commit message: "Update post model"
-        end
-
         append_to_file "db/seeds.rb", <<~RUBY
           user = User.find_or_create_by!(name: "John Doe")
           Post.find_or_create_by!(title: "Hello World", body: "This is a test post", user: user)
