@@ -21,6 +21,15 @@ class Web < Thor
       CMD
       capture:
     )
+
+    run(
+      <<~CMD.gsub(/\s+/, " ").strip,
+          docker build . \
+            --tag workanywhere/wait:2.12.1 \
+            -f dockerfiles/Dockerfile-wait
+      CMD
+      capture:
+    )
   end
 
   desc "setup", "Setup the web service"
@@ -43,18 +52,71 @@ class Web < Thor
   def start(capture: false)
     say "Starting the web service"
 
+    db_port = ENV.fetch("DB_PORT", 3306)
+
     run(
       <<~CMD.gsub(/\s+/, " ").strip,
-        docker run --rm \
+        docker run --rm --detach \
           --name <%= app_name %>-app \
-          --publish 8080:3025 \
+          --publish 8080:9292 \
           --env DB_HOST=<%= app_name %>-db \
+          --env DB_PORT=#{db_port} \
           --env RAILS_MASTER_KEY=$(cat config/master.key) \
+          --env RAILS_ENV=production \
+          --env RAILS_LOG_TO_STDOUT=true \
+          --env RAILS_SERVE_STATIC_FILES=true \
+          --env MYSQL_USER=root \
+          --env MYSQL_PASSWORD="" \
           --network <%= app_name %>-bridge-docker-network \
-          workanywhere/<%= app_name %>-app:latest bin/rails s -p 3025 -b 0.0.0.0
+          --label traefik.enable=true \
+          --label 'traefik.http.routers.workeverywhere.rule=Host(`mysql.workeverywhere.docker`)' \
+          --label traefik.http.routers.workeverywhere.entrypoints=websecure \
+          --label traefik.http.routers.workeverywhere.tls=true \
+          --label traefik.http.services.workeverywhere.loadbalancer.server.port=9292 \
+          --label traefik.docker.network=network.docker-shared-services \
+          workanywhere/<%= app_name %>-app:latest bin/rails s -p 9292 -b 0.0.0.0
       CMD
       capture:
     )
+
+    say "Waiting for the web service to be ready"
+
+    run(
+      <<~CMD.gsub(/\s+/, " ").strip,
+        docker run --rm \
+        --name <%= app_name %>-wait \
+        --network <%= app_name %>-bridge-docker-network \
+        --env WAIT_HOSTS=<%= app_name %>-app:9292 \
+        --env WAIT_TIMEOUT=10 \
+        --env WAIT_BEFORE=1 \
+        --env WAIT_SLEEP_INTERVAL=2 \
+        --env WAIT_COMMAND="/health_check.sh" \
+        --env WAIT_LOGGER_LEVEL=debug \
+        workanywhere/wait:2.12.1
+      CMD
+      capture:
+    )
+
+    say "Adding the app to the traefik network"
+    run(
+      <<~CMD.gsub(/\s+/, " ").strip,
+        docker network connect \
+          network.docker-shared-services \
+          <%= app_name %>-app
+      CMD
+      capture:
+    )
+
+    say "Restarting the traefik service"
+    run(
+      <<~CMD.gsub(/\s+/, " ").strip,
+        (cd "$HOME/Workspace/LocalPAAS/docker-shared-services" && make cert-install restart)
+      CMD
+      capture:
+    )
+
+    say "Re-attaching to the web service"
+    run("docker attach <%= app_name %>-app", capture: false)
   end
 
   desc "stop", "Stops the web service"
