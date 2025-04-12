@@ -136,14 +136,6 @@ def apply_template!
   apply "spec/template.rb"
   git_commit "Add RSpec Support templates"
 
-  if %w[sqlite3 mysql].include?(options[:database])
-    run("rails generate uuid_v7:install")
-    git_commit "Add Uuid_v7 initializer"
-
-    run("rails generate uuid_v7:migrations --force")
-    git_commit "Add Uuid_v7 migrations"
-  end
-
   run("bundle exec rails g rack_mini_profiler:install")
   git_commit "Add Rack Mini Profiler"
 
