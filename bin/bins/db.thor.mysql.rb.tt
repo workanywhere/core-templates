@@ -43,8 +43,8 @@ class Db < Thor
 
   desc "setup", "Sets up the db service"
   def setup(capture: false)
-    run("docker network create mysql_demo_1-bridge-docker-network", capture: )
-    run("docker volume create mysql_demo_1-data-volume", capture: )
+    run("docker network create <%= app_name %>-bridge-docker-network", capture: )
+    run("docker volume create <%= app_name %>-data-volume", capture: )
   end
 
   desc "prepare", "Creates the database and loads the schema"
