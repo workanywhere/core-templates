@@ -36,21 +36,20 @@ class Db < Thor
   end
 
   desc "stop", "Stops the db service"
-  def stop
+  def stop(capture: false)
     say "Stopping db service"
-    run("docker stop <%= app_name %>-db", capture: true )
+    run("docker stop <%= app_name %>-db", capture: )
   end
 
   desc "setup", "Sets up the db service"
-  def setup
-    db_user = ENV.fetch("MYSQL_USER", "root")
-
-    run("docker network create <%= app_name %>-bridge-docker-network", capture: true)
-    run("docker volume create <%= app_name %>-data-volume", capture: true)
+  def setup(capture: false)
+    run("docker network create mysql_demo_1-bridge-docker-network", capture: )
+    run("docker volume create mysql_demo_1-data-volume", capture: )
   end
 
   desc "prepare", "Creates the database and loads the schema"
   def prepare
+    setup(capture: true)
     start(capture: true)
     db_user = ENV.fetch("MYSQL_USER", "root")
     run("docker exec -i <%= app_name %>-db bash -c \"mysql -u #{db_user} < production.sql\"", capture: false)
