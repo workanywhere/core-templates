@@ -12,6 +12,7 @@ class Db < Thor
   end
 
   desc "start", "Starts the db service"
+  method_option :publish, type: :boolean, default: false, desc: 'Publish the port'
   def start(capture: false)
     say "Starting db service"
 
@@ -19,18 +20,15 @@ class Db < Thor
 
     say "Starting db service on port #{db_port}"
 
-    run(
-      <<~CMD.gsub(/\s+/, " ").strip,
-        docker run --rm --detach --name <%= app_name %>-db \
-          --env MYSQL_ALLOW_EMPTY_PASSWORD=yes \
-          --network <%= app_name %>-bridge-docker-network \
-          -v <%= app_name %>-data-volume:/var/lib/mysql \
-          -v "$(pwd)/config/production.sql":"/production.sql" \
-          --publish #{db_port}:3306 \
-          mysql:latest
-      CMD
-      capture:
-    )
+    sub_command = ["docker run --rm --detach --name <%= app_name %>-db"]
+    sub_command << "--env MYSQL_ALLOW_EMPTY_PASSWORD=yes"
+    sub_command << "--network <%= app_name %>-bridge-docker-network"
+    sub_command << "--volume <%= app_name %>-data-volume:/var/lib/mysql"
+    sub_command << "--volume \"$(pwd)/config/production.sql\":\"/production.sql\""
+    sub_command << "--publish #{db_port}:3306" if options[:publish]
+    sub_command << "mysql:latest"
+
+    run(sub_command.join(" "), capture: )
 
     wait_for_db_ready("<%= app_name %>-db")
   end
