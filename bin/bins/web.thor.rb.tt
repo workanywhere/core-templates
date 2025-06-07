@@ -42,7 +42,12 @@ class Web < Thor
 
   desc "prepare", "Prepare the web service"
   def prepare(capture: false)
-    setup(capture: true)
+    # Check if the docker image exists
+    unless system("docker image inspect workanywhere/<%= app_name %>-app:latest > /dev/null 2>&1")
+      say "Docker image workanywhere/<%= app_name %>-app:latest not found, please run `bin/web setup` first."
+      exit 1
+    end
+
     say "Preparing the web service"
 
     run("RAILS_ENV=production bin/rails db:migrate db:seed", capture:)
@@ -50,6 +55,12 @@ class Web < Thor
 
   desc "start", "Start the web service"
   def start(capture: false)
+    # Check if the docker image exists
+    unless system("docker image inspect workanywhere/<%= app_name %>-app:latest > /dev/null 2>&1")
+      say "Docker image workanywhere/<%= app_name %>-app:latest not found, please run `bin/web setup` first."
+      exit 1
+    end
+
     say "Starting the web service"
 
     db_port = ENV.fetch("DB_PORT", 3306)
@@ -69,7 +80,7 @@ class Web < Thor
           --env MYSQL_PASSWORD="" \
           --network <%= app_name %>-bridge-docker-network \
           --label traefik.enable=true \
-          --label 'traefik.http.routers.workeverywhere.rule=Host(`mysql.workeverywhere.docker`)' \
+          --label 'traefik.http.routers.workeverywhere.rule=Host(`<%= app_name %>.workeverywhere.docker`)' \
           --label traefik.http.routers.workeverywhere.entrypoints=websecure \
           --label traefik.http.routers.workeverywhere.tls=true \
           --label traefik.http.services.workeverywhere.loadbalancer.server.port=9292 \
@@ -114,6 +125,8 @@ class Web < Thor
       CMD
       capture:
     )
+
+    run("docker logs <%= app_name %>-app", capture: false)
 
     say "Re-attaching to the web service"
     run("docker attach <%= app_name %>-app", capture: false)
