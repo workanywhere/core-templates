@@ -81,6 +81,17 @@ module PostCreation
         run("cp -v patches/posts_spec.rb spec/system/posts_spec.rb")
         commit message: "Add posts system spec"
 
+        say("Re-Build Docker image with last changes")
+        run("bin/web build")
+        commit message: "Build Docker image with last changes"
+
+        say("Migrate the database.")
+        run("bin/rails db:migrate")
+        commit message: "Migrate database"
+
+        say("Seed the database with initial data.")
+        run("bin/rails db:seed")
+
         if adapter_name =~ /PostgreSQL/
           say("DB_PORT=5433 bin/dev")
         else
