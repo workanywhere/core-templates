@@ -121,7 +121,7 @@ class Web < Thor
     say "Restarting the traefik service"
     run(
       <<~CMD.gsub(/\s+/, " ").strip,
-        (cd "$HOME/Workspace/LocalPAAS/docker-shared-services" && make cert-install restart)
+        (cd "$HOME/Workspace/LocalPAAS/docker-shared-services" && make restart)
       CMD
       capture:
     )
