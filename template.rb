@@ -1,8 +1,8 @@
 require "bundler"
 require "json"
 
-RAILS_REQUIREMENT = "8.0.1".freeze
-RUBY_VERSION = "3.4.2".freeze
+RAILS_REQUIREMENT = "8.0.2".freeze
+RUBY_VERSION = "3.4.4".freeze
 
 # rails _7.2.0_ new my-app-2 \
 #   --database=postgresql \
@@ -141,6 +141,9 @@ def apply_template!
 
   run("yes | bundle exec rails g bullet:install")
   git_commit "Add Bullet"
+
+  run("bin/rails tailwindcss:install")
+  git_commit "Add Tailwind CSS"
 
   append_to_file ".gitignore", <<~IGNORE
 
@@ -346,6 +349,7 @@ def create_database_and_initial_migration
   run_with_clean_bundler_env "bin/db prepare"
   run_with_clean_bundler_env "bin/rails generate migration initial_migration"
   run_with_clean_bundler_env "bin/rails db:prepare"
+  run_with_clean_bundler_env "bin/web setup" # Build the Docker image and setup network.
   run_with_clean_bundler_env "bin/web prepare" # Call build and setup first
 end
 
