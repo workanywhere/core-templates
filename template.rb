@@ -2,14 +2,10 @@ require "bundler"
 require "json"
 
 RAILS_REQUIREMENT = "8.0.2".freeze
-RUBY_VERSION = "3.4.4".freeze
+RUBY_VERSION = "3.4.5".freeze
 
-# rails _7.2.0_ new my-app-2 \
-#   --database=postgresql \
-#   --skip-test \
-#   --skip-jbuilder \
-#   --asset-pipeline=propshaft \
-#   --template ~/WorkSpace/Rails/Rails7/RailsTemplates/core-templates/template.rb
+# gem info kamal # => kamal (2.5.3)
+# gem update kamal
 
 def apply_template!
   assert_minimum_rails_version
