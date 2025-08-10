@@ -50,8 +50,14 @@ class Db < Thor
     setup(capture: true)
     start(capture: true)
     db_user = ENV.fetch("MYSQL_USER", "root")
-    run("docker exec -i <%= app_name %>-db bash -c \"mysql -u #{db_user} < production.sql\"", capture: false)
-    run("docker exec <%= app_name %>-db bash -c \"mysql -u #{db_user} -e 'SHOW DATABASES;'\"", capture: false)
+
+    # import: force TCP + absolute path (inside container)
+    run(%q{docker exec -i <%= app_name %>-db sh -c "mysql \
+      --protocol=TCP -h 127.0.0.1 -P 3306 -u #{db_user} < /production.sql"}, capture: false)
+
+    # show databases: also force TCP
+    run(%q{docker exec <%= app_name %>-db sh -c "mysql \
+      --protocol=TCP -h 127.0.0.1 -P 3306 -u #{db_user} -e 'SHOW DATABASES;'"}, capture: false)
   end
 
   desc "teardown", "Stops and removes the db service"
@@ -70,23 +76,25 @@ class Db < Thor
 
   # Wait until MySQL is accepting connections, or time out
   def wait_for_db_ready(container_name)
-    max_attempts = 10
+    max_attempts = 30
     say "Waiting for MySQL in '#{container_name}' to be ready..."
 
     max_attempts.times do |attempt|
-      # Try a simple "SELECT 1" to confirm MySQL is alive
-      if system("docker exec #{container_name} mysql -u root -e 'SELECT 1' > /dev/null 2>&1")
+      ok = system(%Q{
+        docker exec #{container_name} sh -c "mysqladmin ping \
+          --protocol=TCP -h 127.0.0.1 -P 3306 -u root --silent"
+      })
+      if ok
         say "MySQL is ready!"
         return
       else
-        say "Attempt #{attempt + 1}/#{max_attempts}: Not ready yet. Retrying in 2s..."
-        sleep 2
+        say "Attempt #{attempt + 1}/#{max_attempts}: Not ready yet. Retrying in 1s..."
+        sleep 1
       end
     end
 
-    # If we get here, MySQL never responded in time
     say "ERROR: MySQL did not become ready after #{max_attempts} attempts."
-    exit(1)  # or raise an error, etc.
+    exit(1)
   end
 end
 
